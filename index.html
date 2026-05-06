@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Chetan Sharma — Visionary Java Full Stack & AI Engineer. Architecting scalable enterprise backends and next-generation AI solutions.">
+    <title>Chetan Sharma | Visionary Full Stack & AI Engineer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Rajdhani:wght@300;500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+
+    <div class="bg-base-layer"></div>
+    <div class="octopus-wrapper">
+        <img src="assets/images/cyber_octopus.png" class="octopus-bg" alt="Cyber Octopus Background">
+    </div>
+    <canvas id="neural-canvas"></canvas>
+    <div class="overlay"></div>
+
+    <nav>
+        <a href="#" class="logo">CHETAN SHARMA</a>
+    </nav>
+
+    <div class="container">
+
+        <section id="hero" class="fade-up">
+            <div class="hero-content">
+                <span class="glitch-text">INITIATING SYSTEM...</span>
+                <h1 class="hero-title">Visionary Java Full Stack Engineer</h1>
+                <p class="hero-desc">
+                    Architecting scalable enterprise backends, cloud-native infrastructures, and bridging the gap
+                    between traditional robust engineering and next-generation Artificial Intelligence. High-impact
+                    developer ready to build tools that solve the world's most complex problems.
+                </p>
+                <a href="#vision" class="btn-glow"
+                    onclick="event.preventDefault(); document.getElementById('vision').scrollIntoView({behavior: 'smooth'});">Explore
+                    My Vision</a>
+            </div>
+            <div class="hero-image-wrapper">
+                <div class="image-frame"></div>
+                <img src="assets/images/profile.jpg" alt="Chetan Sharma" class="hero-image">
+            </div>
+        </section>
+
+        <section id="vision" class="fade-up">
+            <h2 class="section-header">The Mission</h2>
+            <div class="vision-box">
+                <p class="vision-text">
+                    As a software engineer, my ultimate trajectory is to evolve into a technological <span
+                        class="vision-highlight">"Octopus"</span>—possessing the neural reach, adaptability, and
+                    multi-threaded intelligence to master every layer of the software ecosystem simultaneously.
+                    <br><br>
+                    With a proven foundation in <span class="vision-highlight">Java, Spring Boot, and Full Stack
+                        development</span>, my focus is rapidly expanding to master emerging AI technologies. I am
+                    driven to integrate <span class="vision-highlight">AI Agents</span> into enterprise workflows,
+                    building intelligent, scalable solutions. I strive to construct robust systems that meet today's
+                    rigorous standards while remaining architecturally prepared for the generative AI revolution.
+                    <br><br>
+                    <span class="vision-highlight">Let's connect</span> to collaborate on innovative projects and build
+                    the intelligent software of the future.
+                </p>
+            </div>
+        </section>
+
+        <section id="skills" class="fade-up">
+            <h2 class="section-header">Technical Arsenal</h2>
+            <div class="skills-grid">
+
+                <div class="skill-node">
+                    <h3 class="skill-node-title">Core Java & Backend</h3>
+                    <div class="skill-pills">
+                        <button class="pill interactive-pill"
+                            onclick="showSkill(this, 'Java 8 - 21+', ['Streams, Lambdas & Functional Interfaces', 'Optional & CompletableFuture', 'Records, Sealed Classes & Virtual Threads (Java 21)', 'Memory Management & JVM Tuning'])">Java
+                            8 - 21+</button>
+                        <button class="pill interactive-pill"
+                            onclick="showSkill(this, 'Spring Boot 3.x', ['Spring Core & Spring MVC', 'Spring Boot Actuator & Micrometer', 'Spring Security (JWT, OAuth2, Keycloak)', 'Spring Data JPA / MongoDB'])">Spring
+                            Boot 3.x</button>
+                        <button class="pill interactive-pill"
+                            onclick="showSkill(this, 'Spring Cloud', ['API Gateway & Eureka', 'Config Server', 'Resilience4j & OpenFeign'])">Spring
+                            Cloud</button>
+                        <button class="pill interactive-pill"
+                            onclick="showSkill(this, 'Microservices', ['Saga & CQRS Patterns', 'Event-Driven Architecture', 'Service Mesh Basics'])">Microservices</button>
+                        <button class="pill interactive-pill"
+                            onclick="showSkill(this, 'REST & GraphQL', ['API Design & Versioning', 'Swagger / OpenAPI Integration', 'Postman Automation'])">REST
+                            & GraphQL</button>
+                    </div>
+                </div>
+
+                <div class="skill-node">
+                    <h3 class="skill-node-title">AI & Future Tech</h3>
+                    <div class="skill-pills">
+                        <button class="pill interactive-pill ai-pill"
+                            onclick="showSkill(this, 'AI Agent Architecture', ['Autonomous Task Agents', 'Multi-Agent Workflows', 'Context Memory Management'])">AI
+                            Agent Architecture</button>
+                        <button class="pill interactive-pill ai-pill"
+                            onclick="showSkill(this, 'Spring AI', ['LLM Orchestration in Java', 'Vector Database Integration', 'Retrieval-Augmented Generation (RAG)'])">Spring
+                            AI</button>
+                        <button class="pill interactive-pill ai-pill"
+                            onclick="showSkill(this, 'LangChain4j', ['Java-based LLM Tooling', 'Function Calling', 'Semantic Search'])">LangChain4j</button>
+                        <button class="pill interactive-pill ai-pill"
+                            onclick="showSkill(this, 'GenAI Integration', ['OpenAI / Claude API Integration', 'Enterprise Chatbots', 'Automated Content Generation'])">GenAI
+                            Integration</button>
+                        <button class="pill interactive-pill ai-pill"
+                            onclick="showSkill(this, 'Prompt Engineering', ['Few-Shot Prompting', 'Chain-of-Thought', 'System Prompt Optimization'])">Prompt
+                            Engineering</button>
+                    </div>
+                </div>
+
+                <div class="skill-node">
+                    <h3 class="skill-node-title">Frontend Excellence</h3>
+                    <div class="skill-pills">
+                        <button class="pill interactive-pill"
+                            onclick="showSkill(this, 'React.js', ['Hooks & Context API', 'Redux & Redux Toolkit', 'React Query / SWR', 'Performance Optimization'])">React.js</button>
+                        <button class="pill interactive-pill"
+                            onclick="showSkill(this, 'Next.js', ['App Router', 'Server Components (RSC)', 'Static Site Generation (SSG)', 'API Routes'])">Next.js</button>
+                        <button class="pill interactive-pill"
+                            onclick="showSkill(this, 'Angular 20', ['Standalone Components', 'RxJS & Signals', 'Dependency Injection', 'Enterprise Migrations'])">Angular
+                            20</button>
+                        <button class="pill interactive-pill"
+                            onclick="showSkill(this, 'TypeScript', ['Strict Typing & Interfaces', 'Generics & Utility Types', 'Advanced Compilation Targets'])">TypeScript</button>
+                        <button class="pill interactive-pill"
+                            onclick="showSkill(this, 'Tailwind CSS', ['Utility-First Design', 'Custom Design Systems', 'Responsive & Dark Mode Implementation'])">Tailwind
+                            CSS</button>
+                    </div>
+                </div>
+
+                <div class="skill-node">
+                    <h3 class="skill-node-title">Data Engineering</h3>
+                    <div class="skill-pills">
+                        <button class="pill interactive-pill"
+                            onclick="showSkill(this, 'PostgreSQL', ['Advanced Queries & Joins', 'Indexing Strategies', 'Stored Procedures', 'Query Execution Optimization'])">PostgreSQL</button>
+                        <button class="pill interactive-pill"
+                            onclick="showSkill(this, 'MongoDB', ['Aggregation Pipelines', 'Document Modeling', 'Indexing & Sharding Basics'])">MongoDB</button>
+                        <button class="pill interactive-pill"
+                            onclick="showSkill(this, 'Redis', ['In-Memory Caching', 'Session Management', 'Rate Limiting'])">Redis</button>
+                        <button class="pill interactive-pill"
+                            onclick="showSkill(this, 'Hibernate / JPA', ['Advanced Entity Mapping', 'L1 / L2 Caching', 'N+1 Problem Resolution', 'Criteria API'])">Hibernate
+                            / JPA</button>
+                    </div>
+                </div>
+
+                <div class="skill-node">
+                    <h3 class="skill-node-title">Cloud & DevOps</h3>
+                    <div class="skill-pills">
+                        <button class="pill interactive-pill"
+                            onclick="showSkill(this, 'Docker & Kubernetes', ['Containerization Strategies', 'Helm Charts', 'Pod Scaling & Management'])">Docker
+                            & Kubernetes</button>
+                        <button class="pill interactive-pill"
+                            onclick="showSkill(this, 'AWS', ['EC2 & RDS', 'S3 & CloudFront', 'Lambda (Serverless)', 'ECS / EKS Deployments'])">AWS</button>
+                        <button class="pill interactive-pill"
+                            onclick="showSkill(this, 'CI / CD Pipelines', ['Jenkins Automation', 'GitHub Actions', 'GitLab CI', 'Automated Testing Gates'])">Jenkins
+                            & GitHub Actions</button>
+                        <button class="pill interactive-pill"
+                            onclick="showSkill(this, 'Kafka', ['Event Streaming', 'Pub/Sub Architectures', 'Kafka Streams Basics'])">Kafka</button>
+                    </div>
+                </div>
+
+                <div class="skill-node">
+                    <h3 class="skill-node-title">Architecture & QA</h3>
+                    <div class="skill-pills">
+                        <button class="pill interactive-pill"
+                            onclick="showSkill(this, 'System Design', ['High & Low Level Design', 'Scalability Patterns', 'Distributed Systems Basics'])">System
+                            Design</button>
+                        <button class="pill interactive-pill"
+                            onclick="showSkill(this, 'Clean Architecture', ['Domain-Driven Design (DDD)', 'SOLID Principles', 'GoF Design Patterns'])">Clean
+                            Architecture</button>
+                        <button class="pill interactive-pill"
+                            onclick="showSkill(this, 'Testing Mastery', ['JUnit 5 & Mockito', 'Testcontainers for DBs', 'Cucumber (BDD)', 'Code Coverage > 80%'])">Testing
+                            Mastery</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="experience" class="fade-up">
+            <h2 class="section-header">Execution History</h2>
+            <div class="cyber-timeline">
+
+                <div class="exp-card">
+                    <h3 class="exp-role">Full Stack Developer (End-to-End Ownership)</h3>
+                    <div class="exp-meta">Master Software Solutions | Jan 2024 – Present</div>
+                    <ul class="exp-desc">
+                        <li>Designed and developed a scalable full-stack application using Java, Spring MVC, and
+                            Angular.</li>
+                        <li>Owned the complete product lifecycle: requirement gathering → development → deployment →
+                            production support.</li>
+                        <li>Migrated legacy frontend from AngularJS to Angular 20, improving performance and
+                            scalability.</li>
+                        <li>Optimized PostgreSQL queries, reducing response time and improving efficiency.</li>
+                    </ul>
+                    <div class="exp-impact">
+                        Delivered and maintained a production-grade system independently for 3+ years. Improved
+                        application performance and user experience through modernization.
+                    </div>
+                </div>
+
+                <div class="exp-card">
+                    <h3 class="exp-role">Senior Java Software Engineer</h3>
+                    <div class="exp-meta">Master Software Solutions | Oct 2022 – Jan 2024</div>
+                    <ul class="exp-desc">
+                        <li>Developed backend services using Spring Boot and REST APIs.</li>
+                        <li>Automated workflows using KNIME and UiPath, saving 100+ hours/month.</li>
+                        <li>Built real-time dashboards using Apache Superset for business insights.</li>
+                        <li>Optimized MySQL queries, improving performance and reducing system load. Worked on AWS
+                            deployment.</li>
+                    </ul>
+                    <div class="exp-impact">
+                        Reduced reporting time and manual effort significantly. Improved system efficiency and
+                        operational productivity.
+                    </div>
+                </div>
+
+                <div class="exp-card">
+                    <h3 class="exp-role">Java Developer</h3>
+                    <div class="exp-meta">ToXSL Technologies Pvt Ltd | Jan 2022 – Sep 2022</div>
+                    <ul class="exp-desc">
+                        <li>Developed backend modules using Core Java and Spring Framework.</li>
+                        <li>Built APIs, handled database operations, and debugged critical production issues.</li>
+                    </ul>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="contact" class="fade-up">
+            <h2 class="section-header">Initialize Connection</h2>
+            <div class="contact-grid">
+                <a href="mailto:chetansharmap7@gmail.com" class="contact-card">
+                    <span class="contact-label">Email Sequence</span>
+                    <span class="contact-value">chetansharmap7@gmail.com</span>
+                </a>
+                <a href="tel:8708982388" class="contact-card">
+                    <span class="contact-label">Direct Line</span>
+                    <span class="contact-value">+91 8708982388</span>
+                </a>
+                <a href="https://linkedin.com/in/chetan-sharma-dev47" target="_blank" class="contact-card">
+                    <span class="contact-label">Professional Network</span>
+                    <span class="contact-value">LinkedIn Profile</span>
+                </a>
+                <div class="contact-card">
+                    <span class="contact-label">Current Coordinates</span>
+                    <span class="contact-value">Mohali, Punjab, India</span>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script src="assets/js/main.js"></script>
+</body>
+
+</html>
