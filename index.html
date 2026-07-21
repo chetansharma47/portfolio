@@ -5,7 +5,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Chetan Sharma — Visionary Java Full Stack & AI Engineer. Architecting scalable enterprise backends and next-generation AI solutions.">
+    <meta name="theme-color" content="#050505">
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Chetan Sharma | Visionary Full Stack & AI Engineer">
+    <meta property="og:description" content="Architecting scalable enterprise backends, cloud-native infrastructures, and bridging Java engineering with AI Agents.">
+    <meta property="og:image" content="assets/images/profile.jpg">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Chetan Sharma | Visionary Full Stack & AI Engineer">
+    <meta name="twitter:description" content="Architecting scalable enterprise backends, cloud-native infrastructures, and bridging Java engineering with AI Agents.">
+    <meta name="twitter:image" content="assets/images/profile.jpg">
+
     <title>Chetan Sharma | Visionary Full Stack & AI Engineer</title>
+    <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
     <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Rajdhani:wght@300;500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
@@ -13,34 +28,82 @@
 <body>
 
     <div class="bg-base-layer"></div>
-    <div class="octopus-wrapper">
-        <img src="assets/images/cyber_octopus.png" class="octopus-bg" alt="Cyber Octopus Background">
+    <div class="ambient-glow-spots">
+        <div class="glow-spot spot-1"></div>
+        <div class="glow-spot spot-2"></div>
     </div>
+    <div class="cyber-grid-layer"></div>
     <canvas id="neural-canvas"></canvas>
     <div class="overlay"></div>
 
     <nav>
         <a href="#" class="logo">CHETAN SHARMA</a>
+        <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Toggle Navigation Menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+        <div class="nav-menu" id="nav-menu">
+            <ul class="nav-links">
+                <li><a href="#vision">Mission</a></li>
+                <li><a href="#skills">Arsenal</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#experience">Execution</a></li>
+                <li><a href="#contact">Connect</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button id="cli-trigger" class="nav-cli-btn" title="Open Interactive Terminal">&gt;_ CLI</button>
+                <button id="theme-toggle" class="nav-theme-btn" title="Toggle Dark/Light Theme">🌙</button>
+                <a href="mailto:chetansharmap7@gmail.com?subject=Resume%20Request" class="nav-resume-btn">Resume</a>
+            </div>
+        </div>
     </nav>
 
     <div class="container">
 
         <section id="hero" class="fade-up">
             <div class="hero-content">
-                <span class="glitch-text">INITIATING SYSTEM...</span>
+                <div class="availability-badge">
+                    <span class="status-dot"></span>
+                    <span>Available for Senior / Lead Full Stack & AI Roles</span>
+                </div>
+                <span class="glitch-text">// SYSTEM INITIALIZED</span>
                 <h1 class="hero-title">Visionary Java Full Stack Engineer</h1>
                 <p class="hero-desc">
-                    Architecting scalable enterprise backends, cloud-native infrastructures, and bridging the gap
-                    between traditional robust engineering and next-generation Artificial Intelligence. High-impact
-                    developer ready to build tools that solve the world's most complex problems.
+                    Architecting scalable enterprise backends, cloud-native infrastructures, and bridging traditional robust engineering with next-generation Artificial Intelligence. High-impact engineer ready to solve complex global problems.
                 </p>
-                <a href="#vision" class="btn-glow"
-                    onclick="event.preventDefault(); document.getElementById('vision').scrollIntoView({behavior: 'smooth'});">Explore
-                    My Vision</a>
+                <div class="hero-actions">
+                    <a href="#projects" class="btn-glow"
+                        onclick="event.preventDefault(); document.getElementById('projects').scrollIntoView({behavior: 'smooth'});">Explore
+                        Projects</a>
+                    <a href="mailto:chetansharmap7@gmail.com?subject=Resume%20Request" class="btn-outline">Download Resume</a>
+                </div>
             </div>
             <div class="hero-image-wrapper">
                 <div class="image-frame"></div>
                 <img src="assets/images/profile.jpg" alt="Chetan Sharma" class="hero-image">
+            </div>
+        </section>
+
+        <!-- HR & Engineering Key Impact Metrics -->
+        <section id="metrics" class="fade-up metrics-section">
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-number">3+</div>
+                    <div class="metric-label">Years System Ownership</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-number">99.9%</div>
+                    <div class="metric-label">Production System Uptime</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-number">100+</div>
+                    <div class="metric-label">Hours/Month Automated</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-number">&gt;80%</div>
+                    <div class="metric-label">Automated Code Coverage</div>
+                </div>
             </div>
         </section>
 
@@ -175,6 +238,64 @@
             </div>
         </section>
 
+        <section id="projects" class="fade-up">
+            <h2 class="section-header">Featured Projects & AI Lab</h2>
+            <div class="projects-grid">
+
+                <div class="project-card">
+                    <div class="project-badge">AI Systems</div>
+                    <h3 class="project-title">Autonomous AI Agent Orchestrator</h3>
+                    <p class="project-desc">
+                        Java-native multi-agent orchestration platform using Spring AI & LangChain4j. Features autonomous goal breakdown, memory context retention, and vector database RAG integration for enterprise automation.
+                    </p>
+                    <div class="project-tech">
+                        <span>Java 21</span>
+                        <span>Spring AI</span>
+                        <span>LangChain4j</span>
+                        <span>Vector DB</span>
+                    </div>
+                    <div class="project-links">
+                        <a href="https://github.com/chetan-sharma-dev47" target="_blank" class="project-btn">Repository ↗</a>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-badge">Backend Architecture</div>
+                    <h3 class="project-title">Enterprise Cloud Microservices Hub</h3>
+                    <p class="project-desc">
+                        High-throughput distributed backend built with Spring Boot 3.x, Spring Cloud Gateway, and Apache Kafka. Implements Saga pattern for distributed transactions, OAuth2 security, and Resilience4j circuit breakers.
+                    </p>
+                    <div class="project-tech">
+                        <span>Spring Boot 3</span>
+                        <span>Kafka</span>
+                        <span>Docker</span>
+                        <span>PostgreSQL</span>
+                    </div>
+                    <div class="project-links">
+                        <a href="https://github.com/chetan-sharma-dev47" target="_blank" class="project-btn">Repository ↗</a>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="project-badge">Modern Frontend</div>
+                    <h3 class="project-title">Angular 20 Enterprise Web Platform</h3>
+                    <p class="project-desc">
+                        Modern enterprise application modernization migrating legacy codebases to Angular 20 Standalone components, RxJS reactive streams, and Signals state management.
+                    </p>
+                    <div class="project-tech">
+                        <span>Angular 20</span>
+                        <span>TypeScript</span>
+                        <span>RxJS & Signals</span>
+                        <span>Tailwind</span>
+                    </div>
+                    <div class="project-links">
+                        <a href="https://github.com/chetan-sharma-dev47" target="_blank" class="project-btn">Repository ↗</a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
         <section id="experience" class="fade-up">
             <h2 class="section-header">Execution History</h2>
             <div class="cyber-timeline">
@@ -228,17 +349,17 @@
         <section id="contact" class="fade-up">
             <h2 class="section-header">Initialize Connection</h2>
             <div class="contact-grid">
-                <a href="mailto:chetansharmap7@gmail.com" class="contact-card">
-                    <span class="contact-label">Email Sequence</span>
+                <div class="contact-card clickable" onclick="copyToClipboard('chetansharmap7@gmail.com', 'Email address copied to clipboard!')">
+                    <span class="contact-label">Email Sequence (Click to Copy)</span>
                     <span class="contact-value">chetansharmap7@gmail.com</span>
-                </a>
-                <a href="tel:8708982388" class="contact-card">
-                    <span class="contact-label">Direct Line</span>
+                </div>
+                <div class="contact-card clickable" onclick="copyToClipboard('+918708982388', 'Phone number copied to clipboard!')">
+                    <span class="contact-label">Direct Line (Click to Copy)</span>
                     <span class="contact-value">+91 8708982388</span>
-                </a>
+                </div>
                 <a href="https://linkedin.com/in/chetan-sharma-dev47" target="_blank" class="contact-card">
                     <span class="contact-label">Professional Network</span>
-                    <span class="contact-value">LinkedIn Profile</span>
+                    <span class="contact-value">LinkedIn Profile ↗</span>
                 </a>
                 <div class="contact-card">
                     <span class="contact-label">Current Coordinates</span>
@@ -247,6 +368,23 @@
             </div>
         </section>
 
+    </div>
+
+    <div id="hud-toast" class="hud-toast"></div>
+
+    <!-- Interactive CLI Console Modal -->
+    <div id="cli-modal" class="cli-modal">
+        <div class="cli-header">
+            <span class="cli-title">⚡ CHETAN-SHARMA-OS v2.4 // TERMINAL CONSOLE</span>
+            <button id="cli-close" class="cli-close-btn">&times;</button>
+        </div>
+        <div id="cli-output" class="cli-output">
+            <div class="cli-line sys-line">SYSTEM READY. Type <span class="cli-cmd">help</span> for available commands.</div>
+        </div>
+        <div class="cli-input-line">
+            <span class="cli-prompt">chetan@dev-system:~$</span>
+            <input type="text" id="cli-input" class="cli-input" placeholder="type 'help' or 'hire'..." autofocus />
+        </div>
     </div>
 
     <script src="assets/js/main.js"></script>
