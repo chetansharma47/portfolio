@@ -333,8 +333,8 @@ Based in Mohali, Punjab, India. End-to-end production owner specializing in high
         case 'experience':
         case 'roles':
             printCliLine(`Enterprise Roles:
-1. <span class="cli-highlight">Master Software Solutions (Norsk Global WLA, UK Client)</span> (Jan 2024 - Present): Full Stack Developer
-   • Angular 20 migration (35-45% load boost) | Multi-DB (PostgreSQL, MySQL, MSSQL) | PostgreSQL 80% acceleration (2s -> 400ms) -> https://www.norsk.global/
+1. <span class="cli-highlight">Master Software Solutions</span> (Jan 2024 - Present): Full Stack Developer (WhiteLabel Platform)
+   • Angular 20 migration (35-45% load boost) | Multi-DB (PostgreSQL, MySQL, MSSQL) | PostgreSQL 80% acceleration (2s -> 400ms)
 2. <span class="cli-highlight">Illuminate Health, USA Client</span> (Oct 2022 - Jan 2024): Sr. Java Software Engineer
    • Cloud Healthcare Platform | AWS Serverless (~10K Lambda jobs/day) | Saved 100+ hrs/mo via Superset & UiPath ETL | Jitsi Video -> https://illuminate.health/
 3. <span class="cli-highlight">ToXSL Technologies / Revelex, USA Client</span> (Jan 2022 - Sep 2022): Java Developer
@@ -343,7 +343,7 @@ Based in Mohali, Punjab, India. End-to-end production owner specializing in high
 
         case 'projects':
             printCliLine(`Featured Production Projects:
-1. <span class="cli-highlight">Norsk Global WhiteLabel Application (WLA) - UK Client</span> (Java 21, Spring MVC, Angular 20, PostgreSQL/MySQL/MSSQL, iText, AspectJ) -> https://www.norsk.global/
+1. <span class="cli-highlight">WhiteLabel Enterprise Web Platform</span> (Java 21, Spring MVC, Angular 20, PostgreSQL/MySQL/MSSQL, iText, AspectJ)
 2. <span class="cli-highlight">Illuminate Health Cloud & Automation Platform - USA Client</span> (AWS Lambda, SES, Cognito, Apache Superset, UiPath, Jitsi Video) -> https://illuminate.health/
 3. <span class="cli-highlight">Revelex Global Travel Engine - USA Client</span> (Java, Spring Boot, REST APIs, MySQL) -> https://www.revelex.com/en
 4. <span class="cli-highlight">Enterprise GenAI & AI Agent Task Force</span> (Claude API, Spring AI, LangChain4j, Prompt Engineering)`);
