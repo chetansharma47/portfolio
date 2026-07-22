@@ -254,6 +254,13 @@
     border-radius: 0 8px 8px 0;
 }
 
+[data-theme="light"] .exp-tech-pills .pill {
+    background: #e2e8f0;
+    border-color: #cbd5e1;
+    color: #0f172a;
+    font-weight: 600;
+}
+
 [data-theme="light"] .metric-number {
     color: #0284c7;
     text-shadow: none;
@@ -1059,6 +1066,29 @@ section {
 .exp-desc {
     color: var(--text-muted);
     margin-bottom: 20px;
+}
+
+.exp-tech-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.exp-tech-pills .pill {
+    font-size: 0.78rem;
+    padding: 4px 10px;
+    background: rgba(0, 240, 255, 0.05);
+    border: 1px solid rgba(0, 240, 255, 0.2);
+    color: var(--cyan-glow);
+    border-radius: 4px;
+}
+
+.active-tag {
+    background: rgba(138, 43, 226, 0.15) !important;
+    border-color: var(--purple-glow) !important;
+    color: #e2b3ff !important;
+    cursor: default;
 }
 
 .exp-desc li {

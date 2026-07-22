@@ -314,10 +314,11 @@ function handleCliCommand(cmd) {
     switch (cmd) {
         case 'help':
             printCliLine(`Available Commands:
-  <span class="cli-highlight">about</span>      - Personal summary & philosophy
-  <span class="cli-highlight">skills</span>     - Core Java, AI & Full Stack Arsenal
-  <span class="cli-highlight">projects</span>   - Featured projects & AI Lab highlights
-  <span class="cli-highlight">contact</span>    - Direct phone & email channels
+  <span class="cli-highlight">about</span>      - Developer profile & architecture philosophy
+  <span class="cli-highlight">experience</span> - Full execution history & enterprise roles
+  <span class="cli-highlight">projects</span>   - Live production SaaS, US Healthcare & Travel-Tech
+  <span class="cli-highlight">skills</span>     - Java 21, Spring Boot, Angular 20 & AWS tech stack
+  <span class="cli-highlight">contact</span>    - Direct email & phone channels
   <span class="cli-highlight">hire</span>       - Why hire Chetan Sharma?
   <span class="cli-highlight">clear</span>      - Clear console screen
   <span class="cli-highlight">exit</span>       - Close console terminal`);
@@ -325,33 +326,51 @@ function handleCliCommand(cmd) {
 
         case 'about':
         case 'bio':
-            printCliLine(`Chetan Sharma — Visionary Java Full Stack & AI Engineer
-Architecting scalable enterprise backends, cloud-native infrastructures, and autonomous AI Agent systems.`);
+            printCliLine(`Chetan Sharma — Full Stack Java Developer & AI Engineer
+Based in Mohali, Punjab, India. End-to-end production owner specializing in high-throughput Java 21 backends, Angular 20 migrations, multi-DB architecture, and enterprise GenAI team leadership.`);
+            break;
+
+        case 'experience':
+        case 'roles':
+            printCliLine(`Enterprise Roles:
+1. <span class="cli-highlight">Master Software Solutions</span> (Jan 2024 - Present): Full Stack Developer (WhiteLabel SaaS Platform)
+   • Angular 20 migration (35-45% load boost) | Multi-DB (PostgreSQL, MySQL, MSSQL) | PostgreSQL 80% acceleration (2s -> 400ms)
+2. <span class="cli-highlight">Illuminate Health, USA Client</span> (Oct 2022 - Jan 2024): Sr. Java Software Engineer
+   • Cloud Healthcare Platform | AWS Serverless (~10K Lambda jobs/day) | Saved 100+ hrs/mo via Superset & UiPath ETL | Jitsi Video
+3. <span class="cli-highlight">ToXSL Technologies / Revelex, USA Client</span> (Jan 2022 - Sep 2022): Java Developer
+   • US Travel-Tech Engine powering global airlines, hotels & cruise lines (revelex.com)`);
+            break;
+
+        case 'projects':
+            printCliLine(`Featured Production Projects:
+1. <span class="cli-highlight">WhiteLabel Enterprise Web Platform</span> (Java 21, Spring MVC, Angular 20, PostgreSQL/MySQL/MSSQL, iText, AspectJ)
+2. <span class="cli-highlight">Illuminate Health Cloud & Automation Platform</span> (AWS Lambda, SES, Cognito, Apache Superset, UiPath, Jitsi Video) -> https://illuminate.health/
+3. <span class="cli-highlight">Revelex Global Travel Engine</span> (Java, Spring Boot, REST APIs, MySQL) -> https://www.revelex.com/en
+4. <span class="cli-highlight">Enterprise GenAI & AI Agent Task Force</span> (Claude API, Spring AI, LangChain4j, Prompt Engineering)`);
             break;
 
         case 'skills':
             printCliLine(`Tech Arsenal:
-• Java 8-21+, Spring Boot 3, Spring Cloud, Microservices
-• AI Agent Architecture, Spring AI, LangChain4j, Vector DBs
-• Angular 20, React.js, TypeScript, Tailwind CSS
-• PostgreSQL, MongoDB, Redis, Kafka, AWS, Docker`);
-            break;
-
-        case 'projects':
-            printCliLine(`Featured Projects:
-1. Autonomous AI Agent Orchestrator (Spring AI, LangChain4j)
-2. Enterprise Cloud Microservices Hub (Spring Boot 3, Kafka, Docker)
-3. Angular 20 Enterprise Web Platform (Angular 20, Signals, RxJS)`);
+• Backend: Java 21, Java 8, Spring Boot 2.3/3.x, Spring MVC, Hibernate 5.6, AspectJ, iText PDF, Swagger, REST APIs
+• Frontend: Angular 20, AngularJS (Migration Expert), TypeScript, HTML5, CSS3, Tailwind
+• Databases: PostgreSQL (Query Optimization ~80%), MySQL, MSSQL
+• Cloud & Tools: AWS (SES, Lambda ~10K jobs/day, Cognito), Apache Superset, KNIME, UiPath ETL, LDAP SSO, Jitsi Video
+• AI & GenAI: Internal AI Team Member, Claude Setup, Prompt Engineering, Spring AI, LangChain4j`);
             break;
 
         case 'contact':
             printCliLine(`Email: chetansharmap7@gmail.com
 Phone: +91 8708982388
-Location: Mohali, Punjab, India`);
+Location: Mohali, Punjab, India
+LinkedIn: https://linkedin.com/in/chetan-sharma-dev47`);
             break;
 
         case 'hire':
-            printCliLine(`🚀 High-impact developer with 3+ years of end-to-end production system ownership, 99.9% uptime track record, and deep expertise in Java + Generative AI integration.`);
+            printCliLine(`🚀 High-Impact Developer with Proven Results:
+• Zero-downtime AngularJS -> Angular 20 frontend migration (35-45% initial load speedup)
+• 80% PostgreSQL query latency reduction (2.0s -> 400ms)
+• 100+ hours/month automated via Apache Superset & UiPath/KNIME ETL
+• Internal AI Team Mentor guiding prompt engineering and GenAI integrations`);
             break;
 
         case 'clear':
