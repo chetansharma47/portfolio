@@ -52,6 +52,23 @@ vercel dev        # serves the site and /api/enquiry together
 A plain static server (`python -m http.server`) works for everything except the
 enquiry endpoint, which needs the Vercel runtime.
 
+## Analytics
+
+Vercel Web Analytics runs through `@vercel/analytics`. The site has no bundler,
+so the package's browser build is vendored at
+`assets/js/vendor/vercel-analytics.js` and imported as a module from
+`index.html`. Refresh the copy after upgrading the package:
+
+```bash
+npm i @vercel/analytics
+npm run analytics:sync
+```
+
+Enable **Project → Analytics → Web Analytics** in Vercel, otherwise
+`/_vercel/insights/script.js` returns 404 and no data is collected. Custom
+events (`ad_booking_opened`, `ad_enquiry_sent`) are sent through `track()` and
+require a plan that includes custom events; page views work on any plan.
+
 ## Tests
 
 ```bash

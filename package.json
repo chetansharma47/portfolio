@@ -6,6 +6,10 @@
   "description": "Portfolio site with an advertisement board enquiry endpoint.",
   "scripts": {
     "dev": "vercel dev",
-    "test:api": "node api/enquiry.test.js"
+    "test:api": "node api/enquiry.test.js",
+    "analytics:sync": "node -e \"require('fs').copyFileSync('node_modules/@vercel/analytics/dist/index.mjs','assets/js/vendor/vercel-analytics.js')\""
+  },
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
   }
 }

@@ -621,6 +621,14 @@
     </div>
 
     <script src="assets/js/main.js?v=2"></script>
+
+    <!-- Vercel Web Analytics. Vendored copy of @vercel/analytics because the
+         site has no bundler; run `npm run analytics:sync` after updating it. -->
+    <script type="module">
+        import { inject, track } from './assets/js/vendor/vercel-analytics.js?v=1';
+        inject();
+        window.vercelTrack = track;
+    </script>
 </body>
 
 </html>

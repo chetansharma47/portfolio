@@ -829,6 +829,7 @@ function openAdBooking(slotId) {
     }
 
     adModal.classList.add('open');
+    trackEvent('ad_booking_opened', { slot: activeAdSlot.name });
     const brandInput = document.getElementById('ad-brand');
     if (brandInput) brandInput.focus();
 }
@@ -857,6 +858,16 @@ const ENQUIRY_ENDPOINT = '/api/enquiry';
 const adForm = document.getElementById('ad-form');
 const adSubmitBtn = document.getElementById('ad-submit');
 const adStatusBox = document.getElementById('ad-form-status');
+
+/* Vercel Analytics custom event, ignored when analytics is unavailable. */
+function trackEvent(name, props) {
+    if (typeof window.vercelTrack !== 'function') return;
+    try {
+        window.vercelTrack(name, props);
+    } catch (err) {
+        /* analytics must never break a submission */
+    }
+}
 
 function setEnquiryStatus(text, state) {
     if (!adStatusBox) return;
@@ -944,6 +955,11 @@ if (adForm) {
             .then(function () {
                 setEnquiryStatus('Enquiry sent. You will get a reply within 24 hours.', 'success');
                 showToast('Enquiry sent to Chetan Sharma');
+                trackEvent('ad_enquiry_sent', {
+                    slot: data.slotName,
+                    currency: data.currency,
+                    cycle: data.cycle
+                });
                 adForm.reset();
                 setTimeout(function () {
                     closeAdBooking();
