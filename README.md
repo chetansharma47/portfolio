@@ -96,6 +96,7 @@ revision rollback, the enquiry inbox and the agent job queue.
 | `ADMIN_PASSWORD` | seed | bootstrap password; generated if absent |
 | `RESEND_API_KEY` | for mail | enquiry notifications |
 | `ENQUIRY_TO` / `ENQUIRY_FROM` | no | override recipient/sender |
+| `BLOB_READ_WRITE_TOKEN` | for uploads | set automatically by the Vercel Blob store |
 | `ANTHROPIC_API_KEY` | for agents | model calls from queued jobs |
 | `CRON_SECRET` | for agents | required by `/api/v1/jobs/drain` |
 | `ENVIRONMENT` | no | `development` / `preview` / `production` |
@@ -116,8 +117,8 @@ automatically, and libpq-only query parameters such as `sslmode` are stripped.
 
 Serverless constraints that shaped the design:
 
-- No persistent filesystem, so image uploads must go to blob storage rather
-  than local disk (not built yet — image fields take URLs/paths today).
+- No persistent filesystem, so image uploads go to Vercel Blob rather than
+  local disk (see Media below).
 - Request duration is capped, so model calls run as queued jobs drained by the
   daily cron rather than inside a page request.
 - Connections use `NullPool` in production; the Neon pooler owns pooling.
@@ -132,6 +133,30 @@ Serverless constraints that shaped the design:
   payload, shown in the form sidebar and restorable in one click.
 - **Security events** (logins, failures, lockouts, deletions) land in
   `audit_logs`, visible under **Activity log**.
+
+## Media
+
+Images are uploaded to a public Vercel Blob store, created once with:
+
+```bash
+vercel blob create-store portfolio-media --access public --yes
+```
+
+That writes `BLOB_READ_WRITE_TOKEN` into every environment. Uploads are
+validated before leaving the process (PNG, JPEG, WebP, GIF, SVG, AVIF, 4 MB
+limit, extension must match the content type) and stored under a pathname with a
+random suffix, so an upload can neither overwrite another nor be guessed.
+
+Two ways in:
+
+- **Media library** (`/admin/media`) — upload, copy the URL, delete. Deleting
+  removes the blob as well as the row, and is recorded in the audit log.
+- **Image fields** on a content form (profile image, ad slot logo) — choose a
+  file to replace the current one, or paste a URL. Every upload is also recorded
+  in `media_assets`.
+
+`app/services/storage.py` talks to the Blob HTTP API directly; there is no
+official Python SDK.
 
 ## Agent extension point
 

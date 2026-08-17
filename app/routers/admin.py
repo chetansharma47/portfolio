@@ -26,6 +26,7 @@ from app.db.models import (
     Enquiry,
     EnquiryStatus,
     Experience,
+    MediaAsset,
     Metric,
     Project,
     Section,
@@ -42,6 +43,13 @@ from app.dependencies import (
 from app.security import create_session_token
 from app.services import content as content_service
 from app.services.auth import AuthError, authenticate, record_event
+from app.services.storage import (
+    StorageNotConfigured,
+    UploadFailed,
+    UploadRejected,
+    delete_blob,
+    upload_image,
+)
 from app.templating import render
 
 router = APIRouter(prefix=settings.admin_path_prefix, include_in_schema=False)
@@ -58,6 +66,19 @@ def _spec_or_404(entity_key: str) -> EntitySpec:
     if spec is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Unknown content type")
     return spec
+
+
+def _form_error(exc: Exception) -> str:
+    """Message shown above a form when saving failed."""
+    if isinstance(exc, json.JSONDecodeError):
+        return f"JSON field is invalid: {exc.msg}"
+    if isinstance(exc, UploadRejected):
+        return f"Image rejected: {exc}"
+    if isinstance(exc, StorageNotConfigured):
+        return "Image storage is not configured on this environment (BLOB_READ_WRITE_TOKEN)."
+    if isinstance(exc, UploadFailed):
+        return f"Image upload failed: {exc}"
+    return "The form could not be saved."
 
 
 # --- Authentication --------------------------------------------------------
@@ -266,13 +287,56 @@ async def entity_edit(
     )
 
 
-async def _collect_form_values(request: Request, spec: EntitySpec) -> dict[str, Any]:
+async def _collect_form_values(
+    request: Request, spec: EntitySpec, session: SessionDep, user_id: int | None = None
+) -> dict[str, Any]:
     form = await request.form()
     values: dict[str, Any] = {}
+
     for field_ in spec.fields:
         raw = form.get(field_.name)
+
+        if field_.kind == "image":
+            upload = form.get(f"{field_.name}__file")
+            stored_url = await _store_upload(
+                upload, session, user_id=user_id, used_for=f"{spec.key}.{field_.name}"
+            )
+            values[field_.name] = stored_url or (str(raw).strip() if raw else "")
+            continue
+
+        if hasattr(raw, "filename"):  # stray file input for a non-image field
+            continue
+
         values[field_.name] = parse_form_value(field_, raw if raw is None else str(raw))
+
     return values
+
+
+async def _store_upload(
+    upload: Any, session: SessionDep, *, user_id: int | None, used_for: str
+) -> str | None:
+    """Upload a submitted file to blob storage and record it. None if no file."""
+    if upload is None or not getattr(upload, "filename", ""):
+        return None
+
+    content = await upload.read()
+    if not content:
+        return None
+
+    stored = await upload_image(upload.filename, content, upload.content_type or "")
+    session.add(
+        MediaAsset(
+            filename=upload.filename[:200],
+            pathname=stored.pathname,
+            url=stored.url,
+            content_type=stored.content_type,
+            size_bytes=stored.size,
+            used_for=used_for[:120],
+            uploaded_by_id=user_id,
+        )
+    )
+    await session.commit()
+    return stored.url
 
 
 @router.post("/content/{entity_key}/new")
@@ -281,8 +345,8 @@ async def entity_create(
 ):
     spec = _spec_or_404(entity_key)
     try:
-        values = await _collect_form_values(request, spec)
-    except json.JSONDecodeError as exc:
+        values = await _collect_form_values(request, spec, session, user.id)
+    except (json.JSONDecodeError, UploadRejected, UploadFailed, StorageNotConfigured) as exc:
         return render(
             request,
             "admin/entity_form.html",
@@ -294,7 +358,7 @@ async def entity_create(
                 "values": {f.name: "" for f in spec.fields},
                 "options": await _resolve_options(session, spec),
                 "revisions": [],
-                "error": f"JSON field is invalid: {exc.msg}",
+                "error": _form_error(exc),
             },
             status_code=status.HTTP_400_BAD_REQUEST,
             headers=NO_STORE,
@@ -321,8 +385,8 @@ async def entity_update(
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Record not found")
 
     try:
-        values = await _collect_form_values(request, spec)
-    except json.JSONDecodeError as exc:
+        values = await _collect_form_values(request, spec, session, user.id)
+    except (json.JSONDecodeError, UploadRejected, UploadFailed, StorageNotConfigured) as exc:
         return render(
             request,
             "admin/entity_form.html",
@@ -339,7 +403,7 @@ async def entity_update(
                 "revisions": await content_service.revisions_for(
                     session, REVISION_ENTITY[entity_key], record_id
                 ),
-                "error": f"JSON field is invalid: {exc.msg}",
+                "error": _form_error(exc),
             },
             status_code=status.HTTP_400_BAD_REQUEST,
             headers=NO_STORE,
@@ -482,3 +546,107 @@ async def activity(request: Request, session: SessionDep, user: CurrentUser):
         },
         headers=NO_STORE,
     )
+
+
+# --- Media library ---------------------------------------------------------
+
+@router.get("/media")
+async def media_library(request: Request, session: SessionDep, user: CurrentUser):
+    result = await session.execute(
+        select(MediaAsset).order_by(MediaAsset.created_at.desc()).limit(200)
+    )
+    return render(
+        request,
+        "admin/media.html",
+        {
+            "user": user,
+            "specs": list(ENTITY_SPECS.values()),
+            "assets": result.scalars().all(),
+            "storage_configured": bool(settings.blob_read_write_token),
+            "error": None,
+        },
+        headers=NO_STORE,
+    )
+
+
+@router.post("/media")
+async def media_upload(
+    request: Request, session: SessionDep, user: EditorUser, _csrf: CsrfGuard
+):
+    form = await request.form()
+    upload = form.get("image")
+    alt_text = str(form.get("alt_text", "")).strip()[:200]
+
+    error = None
+    if upload is None or not getattr(upload, "filename", ""):
+        error = "Choose an image file to upload."
+    else:
+        content = await upload.read()
+        try:
+            stored = await upload_image(upload.filename, content, upload.content_type or "")
+            session.add(
+                MediaAsset(
+                    filename=upload.filename[:200],
+                    pathname=stored.pathname,
+                    url=stored.url,
+                    content_type=stored.content_type,
+                    size_bytes=stored.size,
+                    alt_text=alt_text,
+                    used_for="library",
+                    uploaded_by_id=user.id,
+                )
+            )
+            await record_event(
+                session,
+                "media.uploaded",
+                detail=stored.pathname,
+                actor_email=user.email,
+                ip_address=client_ip(request),
+                user_id=user.id,
+            )
+            await session.commit()
+        except (UploadRejected, UploadFailed, StorageNotConfigured) as exc:
+            error = _form_error(exc)
+
+    if error:
+        result = await session.execute(
+            select(MediaAsset).order_by(MediaAsset.created_at.desc()).limit(200)
+        )
+        return render(
+            request,
+            "admin/media.html",
+            {
+                "user": user,
+                "specs": list(ENTITY_SPECS.values()),
+                "assets": result.scalars().all(),
+                "storage_configured": bool(settings.blob_read_write_token),
+                "error": error,
+            },
+            status_code=status.HTTP_400_BAD_REQUEST,
+            headers=NO_STORE,
+        )
+
+    return _redirect(f"{settings.admin_path_prefix}/media?uploaded=1")
+
+
+@router.post("/media/{asset_id}/delete")
+async def media_delete(
+    asset_id: int, request: Request, session: SessionDep, user: EditorUser, _csrf: CsrfGuard
+):
+    asset = await session.get(MediaAsset, asset_id)
+    if asset is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "Asset not found")
+
+    # Remove the blob first; the row is the record of what exists in storage.
+    removed = await delete_blob(asset.url)
+    await record_event(
+        session,
+        "media.deleted",
+        detail=f"{asset.pathname} (blob removed: {removed})",
+        actor_email=user.email,
+        ip_address=client_ip(request),
+        user_id=user.id,
+    )
+    await session.delete(asset)
+    await session.commit()
+    return _redirect(f"{settings.admin_path_prefix}/media?deleted=1")

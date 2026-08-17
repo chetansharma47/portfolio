@@ -30,7 +30,7 @@ from app.db.models import (
 class Field_:
     name: str
     label: str
-    kind: str = "text"  # text|textarea|number|checkbox|select|lines|json|email|url
+    kind: str = "text"  # text|textarea|number|checkbox|select|lines|json|email|url|image
     help_text: str = ""
     options: list[tuple[str, str]] = field(default_factory=list)
     required: bool = False
@@ -210,7 +210,8 @@ AD_SLOT_SPEC = EntitySpec(
         Field_("brand", "Brand name"),
         Field_("tagline", "Brand tagline"),
         Field_("link_url", "Brand link", kind="url"),
-        Field_("logo_url", "Brand logo URL", kind="url"),
+        Field_("logo_url", "Brand logo", kind="image",
+               help_text="Upload the brand logo or paste a hosted URL."),
         Field_("position", "Position", kind="number"),
         Field_("is_visible", "Visible", kind="checkbox"),
     ],
@@ -237,7 +238,8 @@ SETTINGS_SPEC = EntitySpec(
         Field_("linkedin_url", "LinkedIn URL", kind="url"),
         Field_("github_url", "GitHub URL", kind="url"),
         Field_("resume_url", "Resume URL", kind="url"),
-        Field_("profile_image", "Profile image path"),
+        Field_("profile_image", "Profile image", kind="image",
+               help_text="Upload a new image, or paste a URL/path. Uploads go to Vercel Blob."),
         Field_("availability_note", "Availability badge"),
         Field_("default_theme", "Default theme", kind="select",
                options=[("dark", "Dark"), ("light", "Light")]),
@@ -296,6 +298,11 @@ def parse_form_value(field_: Field_, raw: str | None) -> Any:
 
     if field_.kind == "select" and field_.name == "group_id":
         return int(value) if value else None
+
+    # "image" carries the existing URL as text; an uploaded file, when present,
+    # replaces it in the router before this value is stored.
+    if field_.kind == "image":
+        return value
 
     return value
 

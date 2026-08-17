@@ -37,7 +37,6 @@ SECTIONS = [
             "modernise legacy frontends, and integrate AI agents into real production workflows."
         ),
         "body": {
-            "eyebrow": "// SYSTEM INITIALIZED",
             "primary_label": "Explore Projects",
             "primary_href": "#projects",
             "secondary_label": "Request Resume",

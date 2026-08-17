@@ -250,6 +250,28 @@ class Enquiry(Base, TimestampMixin):
     admin_notes: Mapped[str] = mapped_column(Text, default="", nullable=False)
 
 
+class MediaAsset(Base, TimestampMixin):
+    """An image held in Vercel Blob, uploaded through the admin console."""
+
+    __tablename__ = "media_assets"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    filename: Mapped[str] = mapped_column(String(200), nullable=False)
+    pathname: Mapped[str] = mapped_column(String(300), unique=True, nullable=False)
+    url: Mapped[str] = mapped_column(String(500), nullable=False)
+    content_type: Mapped[str] = mapped_column(String(60), default="", nullable=False)
+    size_bytes: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    alt_text: Mapped[str] = mapped_column(String(200), default="", nullable=False)
+    used_for: Mapped[str] = mapped_column(String(120), default="", nullable=False)
+    uploaded_by_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+
+    @property
+    def size_kb(self) -> int:
+        return max(1, round(self.size_bytes / 1024))
+
+
 class ContentRevision(Base, TimestampMixin):
     """Before/after snapshot of every content mutation, for audit and rollback."""
 

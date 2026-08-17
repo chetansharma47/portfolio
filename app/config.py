@@ -43,6 +43,9 @@ class Settings(BaseSettings):
     admin_password: str | None = None
     admin_path_prefix: str = "/admin"
 
+    # --- Media storage (Vercel Blob) ---------------------------------------
+    blob_read_write_token: str | None = None
+
     # --- Mail (Resend) -----------------------------------------------------
     resend_api_key: str | None = None
     enquiry_to: str = "chetansharmap7@gmail.com"
@@ -63,7 +66,11 @@ class Settings(BaseSettings):
     @field_validator("database_url")
     @classmethod
     def normalise_database_url(cls, value: str) -> str:
-        """Accept the sync URLs that hosting providers hand out."""
+        """Accept the sync URLs that hosting providers hand out.
+
+        `vercel env pull` writes quoted values, so strip those first.
+        """
+        value = value.strip().strip('"').strip("'")
         if value.startswith("postgres://"):
             value = value.replace("postgres://", "postgresql://", 1)
         if value.startswith("postgresql://"):

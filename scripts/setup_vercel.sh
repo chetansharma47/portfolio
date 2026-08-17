@@ -25,8 +25,9 @@ ENVIRONMENTS=("production" "preview" "development")
 KEYS=(SECRET_KEY ADMIN_EMAIL ADMIN_PASSWORD RESEND_API_KEY ENQUIRY_TO ENQUIRY_FROM CRON_SECRET)
 
 read_env() {
-  # read_env KEY -> value from .env.local (first match, no quotes stripped)
-  sed -n "s/^$1=//p" "$ENV_FILE" | head -1
+  # read_env KEY -> value from .env.local. Quotes are stripped because
+  # `vercel env pull` and `vercel blob create-store` rewrite the file quoted.
+  sed -n "s/^$1=//p" "$ENV_FILE" | head -1 | sed 's/^"//; s/"$//'
 }
 
 step() { printf '\n=== %s ===\n' "$1"; }

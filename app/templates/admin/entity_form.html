@@ -24,7 +24,7 @@
 {% endif %}
 
 <div class="admin-columns wide-first">
-    <form class="admin-card" method="post"
+    <form class="admin-card" method="post" enctype="multipart/form-data"
         action="{{ admin_prefix }}/content/{{ spec.key }}/{{ instance.id if instance else 'new' }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
@@ -54,6 +54,23 @@
                 </option>
                 {% endfor %}
             </select>
+
+            {% elif field.kind == 'image' %}
+            {% set current = values.get(field.name, '') %}
+            <div class="admin-image-field">
+                {% if current %}
+                <img class="admin-image-preview"
+                    src="{{ current if current.startswith('http') or current.startswith('/') else '/' ~ current }}"
+                    alt="Current image">
+                {% else %}
+                <div class="admin-image-preview empty">No image</div>
+                {% endif %}
+                <div class="admin-image-inputs">
+                    <input type="file" name="{{ field.name }}__file" accept="image/*">
+                    <input type="text" id="f-{{ field.name }}" name="{{ field.name }}"
+                        value="{{ current }}" placeholder="https://... or assets/images/file.jpg">
+                </div>
+            </div>
 
             {% elif field.kind == 'number' %}
             <input type="number" step="{{ field.step }}" id="f-{{ field.name }}" name="{{ field.name }}"

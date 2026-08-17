@@ -1,0 +1,77 @@
+{% extends "admin/base.html" %}
+{% set active_key = 'media' %}
+{% block title %}Media library{% endblock %}
+
+{% block content %}
+<div class="admin-page-head">
+    <div>
+        <h1>Media library</h1>
+        <p class="admin-muted">Images stored in Vercel Blob. Copy a URL to use it in any content field.</p>
+    </div>
+</div>
+
+{% if not storage_configured %}
+<div class="admin-alert warn">
+    BLOB_READ_WRITE_TOKEN is not set on this environment, so uploads are disabled here.
+</div>
+{% endif %}
+
+{% if request.query_params.get('uploaded') %}
+<div class="admin-alert ok">Image uploaded.</div>
+{% endif %}
+{% if request.query_params.get('deleted') %}
+<div class="admin-alert ok">Image deleted from storage.</div>
+{% endif %}
+{% if error %}
+<div class="admin-alert error">{{ error }}</div>
+{% endif %}
+
+<form class="admin-card" method="post" enctype="multipart/form-data" action="{{ admin_prefix }}/media">
+    <h2 class="admin-card-title">Upload an image</h2>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <div class="admin-upload-row">
+        <label class="admin-field">
+            <span>File</span>
+            <input type="file" name="image" accept="image/*" required>
+            <span class="admin-help">PNG, JPEG, WebP, GIF, SVG or AVIF, up to 4 MB.</span>
+        </label>
+        <label class="admin-field">
+            <span>Alt text</span>
+            <input type="text" name="alt_text" maxlength="200" placeholder="Describe the image">
+        </label>
+        <button type="submit" class="admin-btn primary" {% if not storage_configured %}disabled{% endif %}>
+            Upload
+        </button>
+    </div>
+</form>
+
+{% if assets %}
+<div class="admin-media-grid">
+    {% for asset in assets %}
+    <figure class="admin-media-card">
+        <img src="{{ asset.url }}" alt="{{ asset.alt_text or asset.filename }}" loading="lazy">
+        <figcaption>
+            <b title="{{ asset.filename }}">{{ asset.filename|truncate(28) }}</b>
+            <span class="admin-muted">{{ asset.size_kb }} KB &middot; {{ asset.content_type }}</span>
+            {% if asset.used_for and asset.used_for != 'library' %}
+            <span class="admin-chip">{{ asset.used_for }}</span>
+            {% endif %}
+            <div class="admin-media-actions">
+                <input type="text" class="admin-media-url" value="{{ asset.url }}" readonly
+                    onclick="this.select()">
+                <form method="post" action="{{ admin_prefix }}/media/{{ asset.id }}/delete"
+                    onsubmit="return confirm('Delete this image from storage? Any content still pointing at it will break.');">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                    <button type="submit" class="admin-btn small danger">Delete</button>
+                </form>
+            </div>
+        </figcaption>
+    </figure>
+    {% endfor %}
+</div>
+{% else %}
+<div class="admin-card admin-empty">
+    <p>No images uploaded yet.</p>
+</div>
+{% endif %}
+{% endblock %}
