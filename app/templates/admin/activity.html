@@ -1,0 +1,56 @@
+{% extends "admin/base.html" %}
+{% set active_key = 'activity' %}
+{% block title %}Activity log{% endblock %}
+
+{% block content %}
+<div class="admin-page-head">
+    <div>
+        <h1>Activity log</h1>
+        <p class="admin-muted">Content revisions and security events, newest first.</p>
+    </div>
+</div>
+
+<div class="admin-columns">
+    <section class="admin-card">
+        <h2 class="admin-card-title">Content revisions</h2>
+        <table class="admin-table">
+            <thead>
+                <tr><th>When</th><th>Entity</th><th>Action</th><th>Version</th></tr>
+            </thead>
+            <tbody>
+                {% for revision in revisions %}
+                <tr>
+                    <td class="admin-muted">{{ revision.created_at.strftime('%d %b %H:%M') }}</td>
+                    <td>{{ revision.entity }} #{{ revision.entity_id }}</td>
+                    <td><span class="admin-chip {{ revision.action }}">{{ revision.action }}</span></td>
+                    <td>v{{ revision.version }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="4" class="admin-muted">No revisions recorded.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+    <section class="admin-card">
+        <h2 class="admin-card-title">Security events</h2>
+        <table class="admin-table">
+            <thead>
+                <tr><th>When</th><th>Event</th><th>Actor</th><th>IP</th></tr>
+            </thead>
+            <tbody>
+                {% for event in events %}
+                <tr>
+                    <td class="admin-muted">{{ event.created_at.strftime('%d %b %H:%M') }}</td>
+                    <td>{{ event.event }}</td>
+                    <td>{{ event.actor_email or '-' }}</td>
+                    <td class="admin-muted">{{ event.ip_address or '-' }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="4" class="admin-muted">No events recorded.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+</div>
+{% endblock %}

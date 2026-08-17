@@ -1,0 +1,108 @@
+{% extends "admin/base.html" %}
+{% set active_key = 'dashboard' %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="admin-page-head">
+    <div>
+        <h1>Dashboard</h1>
+        <p class="admin-muted">Everything on the public site is editable from here.</p>
+    </div>
+</div>
+
+{% if not mail_configured %}
+<div class="admin-alert warn">
+    RESEND_API_KEY is not set on this environment. Enquiries are still saved to the database, but
+    notification email is not being sent.
+</div>
+{% endif %}
+
+<div class="admin-stat-grid">
+    <a class="admin-stat" href="{{ admin_prefix }}/enquiries">
+        <span class="admin-stat-num">{{ stats.enquiries_new }}</span>
+        <span class="admin-stat-label">New enquiries</span>
+    </a>
+    <div class="admin-stat">
+        <span class="admin-stat-num">{{ stats.slots_booked }}/{{ stats.ad_slots }}</span>
+        <span class="admin-stat-label">Ad slots booked</span>
+    </div>
+    <a class="admin-stat" href="{{ admin_prefix }}/content/projects">
+        <span class="admin-stat-num">{{ stats.projects }}</span>
+        <span class="admin-stat-label">Projects</span>
+    </a>
+    <a class="admin-stat" href="{{ admin_prefix }}/content/bucket">
+        <span class="admin-stat-num">{{ stats.bucket }}</span>
+        <span class="admin-stat-label">Bucket items</span>
+    </a>
+    <a class="admin-stat" href="{{ admin_prefix }}/content/experience">
+        <span class="admin-stat-num">{{ stats.experience }}</span>
+        <span class="admin-stat-label">Roles</span>
+    </a>
+    <a class="admin-stat" href="{{ admin_prefix }}/content/sections">
+        <span class="admin-stat-num">{{ stats.sections }}</span>
+        <span class="admin-stat-label">Sections</span>
+    </a>
+</div>
+
+{% if stats.enquiries_undelivered %}
+<div class="admin-alert warn">
+    {{ stats.enquiries_undelivered }} enquiry(ies) were saved but not emailed. Open the enquiry list to
+    see the delivery error.
+</div>
+{% endif %}
+
+<div class="admin-columns">
+    <section class="admin-card">
+        <h2 class="admin-card-title">Latest enquiries</h2>
+        {% if recent_enquiries %}
+        <table class="admin-table">
+            <thead>
+                <tr><th>Brand</th><th>Slot</th><th>Budget</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+                {% for enquiry in recent_enquiries %}
+                <tr>
+                    <td>{{ enquiry.brand }}</td>
+                    <td class="admin-muted">{{ enquiry.slot_name }}</td>
+                    <td>{{ enquiry.budget_amount }} {{ enquiry.currency }}</td>
+                    <td><span class="admin-chip {{ enquiry.status.value }}">{{ enquiry.status.value }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="admin-muted">No enquiries yet.</p>
+        {% endif %}
+    </section>
+
+    <section class="admin-card">
+        <h2 class="admin-card-title">Recent content changes</h2>
+        {% if recent_activity %}
+        <ul class="admin-feed">
+            {% for revision in recent_activity %}
+            <li>
+                <b>{{ revision.entity }}</b> #{{ revision.entity_id }} {{ revision.action }}
+                <span class="admin-muted">v{{ revision.version }} &middot; {{ revision.created_at.strftime('%d %b %H:%M') }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="admin-muted">No changes recorded yet.</p>
+        {% endif %}
+    </section>
+
+    <section class="admin-card">
+        <h2 class="admin-card-title">Security events</h2>
+        <ul class="admin-feed">
+            {% for event in recent_logins %}
+            <li>
+                <b>{{ event.event }}</b> {{ event.actor_email }}
+                <span class="admin-muted">{{ event.ip_address }} &middot; {{ event.created_at.strftime('%d %b %H:%M') }}</span>
+            </li>
+            {% else %}
+            <li class="admin-muted">Nothing recorded yet.</li>
+            {% endfor %}
+        </ul>
+    </section>
+</div>
+{% endblock %}

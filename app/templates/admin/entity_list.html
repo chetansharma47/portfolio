@@ -1,0 +1,60 @@
+{% extends "admin/base.html" %}
+{% set active_key = spec.key %}
+{% block title %}{{ spec.label_plural }}{% endblock %}
+
+{% block content %}
+<div class="admin-page-head">
+    <div>
+        <h1>{{ spec.label_plural }}</h1>
+        {% if spec.description %}<p class="admin-muted">{{ spec.description }}</p>{% endif %}
+    </div>
+    <a class="admin-btn primary" href="{{ admin_prefix }}/content/{{ spec.key }}/new">New {{ spec.label|lower }}</a>
+</div>
+
+{% if request.query_params.get('deleted') %}
+<div class="admin-alert ok">Record deleted. The change is recorded in the activity log.</div>
+{% endif %}
+
+{% if rows %}
+<div class="admin-card">
+    <table class="admin-table">
+        <thead>
+            <tr>
+                {% for column in spec.columns %}
+                <th>{{ column.replace('_', ' ')|title }}</th>
+                {% endfor %}
+                <th>Updated</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            <tr>
+                {% for column in spec.columns %}
+                <td>
+                    {% set value = row[column] %}
+                    {% if value is boolean %}
+                    <span class="admin-chip {{ 'on' if value else 'off' }}">{{ 'yes' if value else 'no' }}</span>
+                    {% elif value is none %}
+                    <span class="admin-muted">-</span>
+                    {% else %}
+                    {{ (value.value if value.__class__.__name__ in ['BucketType', 'AdSlotStatus', 'UserRole'] else value)|string|truncate(70) }}
+                    {% endif %}
+                </td>
+                {% endfor %}
+                <td class="admin-muted">{{ row.updated_at.strftime('%d %b %H:%M') }}</td>
+                <td class="admin-row-actions">
+                    <a class="admin-btn small" href="{{ admin_prefix }}/content/{{ spec.key }}/{{ row.id }}">Edit</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="admin-card admin-empty">
+    <p>No {{ spec.label_plural|lower }} yet.</p>
+    <a class="admin-btn primary" href="{{ admin_prefix }}/content/{{ spec.key }}/new">Create the first one</a>
+</div>
+{% endif %}
+{% endblock %}

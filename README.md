@@ -1,84 +1,148 @@
-# Portfolio — Chetan Sharma
+# Portfolio Platform — Chetan Sharma
 
-Static portfolio site (no build step) with one serverless endpoint for
-advertisement board enquiries.
+A content-managed portfolio: a public server-rendered site and a private admin
+console, one FastAPI application, deployed on Vercel.
 
-```
-index.html              markup for every section
-assets/css/style.css    styles, dark + light themes
-assets/js/main.js       interactions, bucket module, ad board, enquiry form
-api/enquiry.js          Vercel Edge Function: sends enquiries through Resend
-api/enquiry.test.js     endpoint tests (stubbed mail, sends nothing)
-```
+- **Public site** — `/` — server-rendered from the database, so search engines
+  see the full content and there is no empty-then-populate flash.
+- **Admin console** — `/admin` — every section, project, role, skill, bucket
+  item and ad slot is editable, with revision history and rollback.
 
-## Advertisement board enquiries
+## Stack
 
-The booking form posts JSON to `/api/enquiry`. The function validates the
-submission and sends the mail with the [Resend](https://resend.com) API, so the
-API key stays on the server and never reaches the browser. If the request fails
-for any reason, the browser falls back to opening a prefilled mail draft, so an
-enquiry is never lost.
-
-### Environment variables
-
-| Variable | Required | Purpose |
+| Layer | Choice | Why |
 | --- | --- | --- |
-| `RESEND_API_KEY` | yes | API key from https://resend.com/api-keys |
-| `ENQUIRY_TO` | no | Inbox receiving enquiries (defaults to the owner address) |
-| `ENQUIRY_FROM` | no | Verified sender, e.g. `Ad Board <ads@yourdomain.com>` |
+| Web framework | FastAPI (ASGI, Python 3.12) | async, typed, first-class for AI/agent libraries |
+| Templating | Jinja2 | server-rendered pages, no build step |
+| Database | Postgres (Neon) via SQLAlchemy 2.0 async + asyncpg | serverless-friendly pooling, `pgvector` available for future RAG |
+| Migrations | Alembic | reviewable schema history |
+| Auth | Argon2 hashes, JWT session in an httpOnly cookie, CSRF double-submit | no shared session store needed on serverless |
+| Mail | Resend REST API | key stays server-side |
+| Analytics | Vercel Web Analytics | page views plus custom events |
+| Hosting | Vercel Python runtime (`api/index.py`) | same platform as before |
+| Tests | pytest + FastAPI TestClient over SQLite | fast, no external services |
 
-Set the same values in the Vercel dashboard under
-**Project → Settings → Environment Variables**, or with the CLI:
+## Layout
 
-```bash
-npm i -g vercel
-vercel link
-vercel env add RESEND_API_KEY production
+```
+api/index.py            Vercel entry point exposing the ASGI app
+app/
+  config.py             settings from environment variables
+  main.py               app factory, middleware, error handlers
+  security.py           password hashing, session tokens, CSRF
+  dependencies.py       current user, role guards, CSRF guard
+  admin_schema.py       declarative admin form definitions
+  db/
+    base.py             declarative base, timestamp mixin
+    session.py          async engine (NullPool on serverless)
+    models.py           all tables
+  routers/
+    public.py           SSR pages, enquiry API, cron job drain
+    admin.py            login, dashboard, content CRUD, enquiry inbox
+  services/
+    auth.py             authentication, lockout, audit events
+    content.py          content reads plus writes with revision history
+    mail.py             Resend delivery
+    agents.py           AI job queue, handlers, Claude calls
+  templates/            public/ and admin/ Jinja2 templates
+  seed_data.py          the original portfolio content
+  seed.py               idempotent seeding CLI
+alembic/                migration environment and versions
+assets/                 CSS, JS and images served straight from the CDN
+tests/                  pytest suite
 ```
 
-`onboarding@resend.dev` is usable as the sender without owning a domain, but it
-can only deliver to the Resend account owner's address. After verifying a domain
-in Resend, set `ENQUIRY_FROM` to an address on that domain.
-
-Local secrets live in `.env.local` (git-ignored). See `.env.example`.
-
-## Running locally
+## Local development
 
 ```bash
-npm i -g vercel   # once
-vercel dev        # serves the site and /api/enquiry together
+python -m venv .venv
+.venv\Scripts\pip install -r requirements-dev.txt
+
+copy .env.example .env.local        # then fill in the values
+
+.venv\Scripts\python -m alembic upgrade head
+.venv\Scripts\python -m app.seed    # inserts the starting content + admin user
+.venv\Scripts\python -m uvicorn app.main:app --reload
 ```
 
-A plain static server (`python -m http.server`) works for everything except the
-enquiry endpoint, which needs the Vercel runtime.
+Public site on http://127.0.0.1:8000, console on http://127.0.0.1:8000/admin.
 
-## Analytics
+Without `DATABASE_URL` the app falls back to a local SQLite file, which is how
+the tests run. Point `DATABASE_URL` at Neon to develop against Postgres.
 
-Vercel Web Analytics runs through `@vercel/analytics`. The site has no bundler,
-so the package's browser build is vendored at
-`assets/js/vendor/vercel-analytics.js` and imported as a module from
-`index.html`. Refresh the copy after upgrading the package:
+`python -m app.seed` is safe to re-run: it only inserts records that are
+missing and never overwrites content edited in the console. `--reset` drops
+everything first and is refused when `ENVIRONMENT=production`.
 
-```bash
-npm i @vercel/analytics
-npm run analytics:sync
-```
-
-Enable **Project → Analytics → Web Analytics** in Vercel, otherwise
-`/_vercel/insights/script.js` returns 404 and no data is collected. Custom
-events (`ad_booking_opened`, `ad_enquiry_sent`) are sent through `track()` and
-require a plan that includes custom events; page views work on any plan.
+If `ADMIN_PASSWORD` is not set, the seed generates one and prints it once.
 
 ## Tests
 
 ```bash
-node api/enquiry.test.js
+.venv\Scripts\python -m pytest
 ```
 
-## Managing content
+Covers the public page, section visibility, enquiry validation and storage,
+login failures and lockout auditing, CSRF rejection, content create/edit/delete,
+revision rollback, the enquiry inbox and the agent job queue.
 
-- **Bucket items** — edit `DEFAULT_BUCKET` in `assets/js/main.js`. Additions made
-  through the UI are stored per browser in `localStorage`; use **Export JSON** on
-  the section and paste the result into `DEFAULT_BUCKET` to publish them.
-- **Ad slots** — edit `AD_SLOTS` in `assets/js/main.js`. Set a slot's `status` to
-  `'booked'` and add `brand`, `tagline`, `link` and `logo` to run a campaign.
+## Environment variables
+
+| Variable | Required | Purpose |
+| --- | --- | --- |
+| `DATABASE_URL` | production | Neon Postgres URL (pooled endpoint) |
+| `SECRET_KEY` | production | signs admin session cookies |
+| `ADMIN_EMAIL` | seed | bootstrap admin account |
+| `ADMIN_PASSWORD` | seed | bootstrap password; generated if absent |
+| `RESEND_API_KEY` | for mail | enquiry notifications |
+| `ENQUIRY_TO` / `ENQUIRY_FROM` | no | override recipient/sender |
+| `ANTHROPIC_API_KEY` | for agents | model calls from queued jobs |
+| `CRON_SECRET` | for agents | required by `/api/v1/jobs/drain` |
+| `ENVIRONMENT` | no | `development` / `preview` / `production` |
+| `PUBLIC_CACHE_SECONDS` | no | edge cache lifetime for public pages |
+
+`postgres://` and `postgresql://` URLs are rewritten to the asyncpg driver
+automatically, and libpq-only query parameters such as `sslmode` are stripped.
+
+## Deployment (Vercel)
+
+1. Add the environment variables above under **Project → Settings →
+   Environment Variables**.
+2. Create the Neon database and run migrations against it:
+   `DATABASE_URL=... .venv\Scripts\python -m alembic upgrade head`
+   then `DATABASE_URL=... .venv\Scripts\python -m app.seed`.
+3. Push. `vercel.json` rewrites everything except `/assets` and `/_vercel` to
+   `api/index.py`, so the ASGI app serves both surfaces.
+
+Serverless constraints that shaped the design:
+
+- No persistent filesystem, so image uploads must go to blob storage rather
+  than local disk (not built yet — image fields take URLs/paths today).
+- Request duration is capped, so model calls run as queued jobs drained by the
+  daily cron rather than inside a page request.
+- Connections use `NullPool` in production; the Neon pooler owns pooling.
+
+## Content model notes
+
+- **Sections** hold heading, intro copy, ordering, visibility and a small JSON
+  `body` for section-specific extras (hero buttons, board marquee, CTA text).
+- **Typed tables** back the repeated content: metrics, skill groups + skills,
+  projects, experience, bucket items, ad slots.
+- **Every write** records a `content_revisions` row with the full before/after
+  payload, shown in the form sidebar and restorable in one click.
+- **Security events** (logins, failures, lockouts, deletions) land in
+  `audit_logs`, visible under **Activity log**.
+
+## Agent extension point
+
+`app/services/agents.py` registers async handlers by job type:
+
+```python
+@handler("draft_section_copy")
+async def draft_section_copy(session, payload): ...
+```
+
+Enqueue with `await enqueue(session, "draft_section_copy", {"section_key": "hero"})`.
+The daily cron drains the queue, records results and retries a failing job up to
+three times. The shipped handler drafts alternative copy and stores it as a
+suggestion; it never edits live content by itself.

@@ -1,0 +1,360 @@
+{% extends "site/base.html" %}
+
+{% set hero = sections.get('hero') %}
+{% set metrics_section = sections.get('metrics') %}
+{% set vision = sections.get('vision') %}
+{% set skills_section = sections.get('skills') %}
+{% set projects_section = sections.get('projects') %}
+{% set experience_section = sections.get('experience') %}
+{% set bucket_section = sections.get('bucket') %}
+{% set adboard_section = sections.get('adboard') %}
+{% set contact_section = sections.get('contact') %}
+
+{% block content %}
+<div class="container">
+
+    {% if hero %}
+    <section id="hero" class="fade-up">
+        <div class="hero-content">
+            {% if settings_row and settings_row.availability_note %}
+            <div class="availability-badge">
+                <span class="status-dot"></span>
+                <span>{{ settings_row.availability_note }}</span>
+            </div>
+            {% endif %}
+            {% if hero.body.get('eyebrow') %}
+            <span class="glitch-text">{{ hero.body['eyebrow'] }}</span>
+            {% endif %}
+            <h1 class="hero-title">{{ hero.heading }}</h1>
+            <p class="hero-desc">{{ hero.subheading }}</p>
+            <div class="hero-actions">
+                {% if hero.body.get('primary_label') %}
+                <a href="{{ hero.body.get('primary_href', '#projects') }}" class="btn-glow">{{ hero.body['primary_label'] }}</a>
+                {% endif %}
+                {% if hero.body.get('secondary_label') %}
+                <a href="{{ hero.body.get('secondary_href', '#contact') }}" class="btn-outline">{{ hero.body['secondary_label'] }}</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="hero-image-wrapper">
+            <div class="image-frame"></div>
+            <img src="/{{ settings_row.profile_image if settings_row and settings_row.profile_image else 'assets/images/profile.jpg' }}"
+                alt="{{ settings_row.owner_name if settings_row else site_name }}" class="hero-image">
+        </div>
+    </section>
+    {% endif %}
+
+    {% if metrics_section and metrics %}
+    <section id="metrics" class="fade-up metrics-section">
+        <div class="metrics-grid">
+            {% for metric in metrics %}
+            <div class="metric-card">
+                <div class="metric-number" data-target="{{ metric.numeric_target if metric.numeric_target is not none else '' }}"
+                    data-prefix="{{ metric.prefix }}" data-suffix="{{ metric.suffix }}">{{ metric.value }}</div>
+                <div class="metric-label">{{ metric.label }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if vision %}
+    <section id="vision" class="fade-up">
+        <h2 class="section-header">{{ vision.heading }}</h2>
+        <div class="vision-box">
+            <p class="vision-text">{{ vision.subheading|safe }}</p>
+        </div>
+    </section>
+    {% endif %}
+
+    {% if skills_section and skill_groups %}
+    <section id="skills" class="fade-up">
+        <h2 class="section-header">{{ skills_section.heading }}</h2>
+        <div class="skills-grid">
+            {% for group in skill_groups %}
+            <div class="skill-node">
+                <h3 class="skill-node-title">{{ group.title }}</h3>
+                <div class="skill-pills">
+                    {% for skill in group.skills %}
+                    <button class="pill interactive-pill{{ ' ai-pill' if group.accent == 'purple' else '' }}"
+                        data-skill="{{ skill.name }}" data-details="{{ skill.details|tojson }}">{{ skill.name }}</button>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if projects_section and projects %}
+    <section id="projects" class="fade-up">
+        <h2 class="section-header">{{ projects_section.heading }}</h2>
+        <div class="projects-grid">
+            {% for project in projects %}
+            <div class="project-card">
+                {% if project.badge %}<div class="project-badge">{{ project.badge }}</div>{% endif %}
+                <h3 class="project-title">{{ project.title }}</h3>
+                <p class="project-desc">{{ project.description }}</p>
+                <div class="project-tech">
+                    {% for tag in project.tech %}<span>{{ tag }}</span>{% endfor %}
+                </div>
+                <div class="project-links">
+                    {% if project.link_url %}
+                    <a href="{{ project.link_url }}" target="_blank" rel="noopener" class="project-btn">{{ project.link_label or 'Visit' }} &#8599;</a>
+                    {% elif project.tag_label %}
+                    <span class="project-btn active-tag">{{ project.tag_label }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if experience_section and experiences %}
+    <section id="experience" class="fade-up">
+        <h2 class="section-header">{{ experience_section.heading }}</h2>
+        <div class="cyber-timeline">
+            {% for role in experiences %}
+            <div class="exp-card">
+                <h3 class="exp-role">{{ role.role }}</h3>
+                <div class="exp-meta">
+                    {{ role.company }}{% if role.location %} | {{ role.location }}{% endif %}{% if role.period %} | {{ role.period }}{% endif %}
+                </div>
+                <div class="exp-tech-pills">
+                    {% for tag in role.tech %}<span class="pill">{{ tag }}</span>{% endfor %}
+                </div>
+                <ul class="exp-desc">
+                    {% for bullet in role.bullets %}<li>{{ bullet|safe }}</li>{% endfor %}
+                </ul>
+                {% if role.impact %}
+                <div class="exp-impact"><strong>Key Impact:</strong> {{ role.impact }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if bucket_section %}
+    <section id="bucket" class="fade-up">
+        <h2 class="section-header">{{ bucket_section.heading }}</h2>
+        {% if bucket_section.subheading %}
+        <p class="bucket-intro">{{ bucket_section.subheading|safe }}</p>
+        {% endif %}
+
+        <div class="bucket-stats">
+            <div class="bucket-stat"><span class="bucket-stat-num">{{ bucket_stats.total }}</span><span class="bucket-stat-label">In the Bucket</span></div>
+            <div class="bucket-stat"><span class="bucket-stat-num">{{ bucket_stats.active }}</span><span class="bucket-stat-label">In Progress</span></div>
+            <div class="bucket-stat"><span class="bucket-stat-num">{{ bucket_stats.done }}</span><span class="bucket-stat-label">Achieved</span></div>
+            <div class="bucket-stat"><span class="bucket-stat-num">{{ bucket_stats.average }}%</span><span class="bucket-stat-label">Overall Completion</span></div>
+        </div>
+
+        <div class="bucket-toolbar">
+            <div class="bucket-filters" id="bucket-filters">
+                <button class="bucket-filter active" data-filter="all">All</button>
+                <button class="bucket-filter" data-filter="skill">Skills</button>
+                <button class="bucket-filter" data-filter="goal">Goals</button>
+                <button class="bucket-filter" data-filter="progress">In Progress</button>
+                <button class="bucket-filter" data-filter="done">Achieved</button>
+            </div>
+        </div>
+
+        <div class="bucket-grid" id="bucket-grid">
+            {% for item in bucket_items %}
+            {% set state = 'done' if item.progress >= 100 else ('progress' if item.progress > 0 else 'planned') %}
+            <div class="bucket-card {{ item.item_type.value }}" data-type="{{ item.item_type.value }}" data-state="{{ state }}">
+                <div class="bucket-card-top">
+                    <span class="bucket-tag {{ item.item_type.value }}">{{ 'Skill' if item.item_type.value == 'skill' else 'Goal' }}</span>
+                    <span class="bucket-status {{ state }}">
+                        {{ 'Achieved' if state == 'done' else ('In Progress' if state == 'progress' else 'Planned') }}
+                    </span>
+                </div>
+                <h3 class="bucket-card-title">{{ item.title }}</h3>
+                {% if item.note %}<p class="bucket-card-note">{{ item.note }}</p>{% endif %}
+                <div class="bucket-meta">
+                    <span class="bucket-target">Target: {{ item.target }}</span>
+                    <span class="bucket-percent">{{ item.progress }}%</span>
+                </div>
+                <div class="bucket-bar"><div class="bucket-bar-fill" style="width:{{ item.progress }}%"></div></div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if adboard_section and ad_slots %}
+    <section id="adboard" class="fade-up">
+        <h2 class="section-header">{{ adboard_section.heading }}</h2>
+        {% if adboard_section.subheading %}
+        <p class="bucket-intro">{{ adboard_section.subheading|safe }}</p>
+        {% endif %}
+
+        <div class="board-frame">
+            <div class="board-marquee">
+                <span>{{ adboard_section.body.get('marquee', 'SPACE TO LET &middot; ADVERTISE HERE &middot; ENQUIRE FOR RATES')|safe }}</span>
+            </div>
+            <div class="ad-grid" id="ad-grid">
+                {% for slot in ad_slots %}
+                {% if slot.status.value == 'booked' %}
+                <div class="ad-slot booked {{ slot.tier }}">
+                    <span class="ad-slot-code">{{ slot.name }} &middot; {{ slot.size }}</span>
+                    <div class="ad-creative">
+                        {% if slot.logo_url %}<img src="{{ slot.logo_url }}" alt="{{ slot.brand }}" class="ad-logo">{% endif %}
+                        <h3 class="ad-brand">{{ slot.brand }}</h3>
+                        <p class="ad-tagline">{{ slot.tagline }}</p>
+                        {% if slot.link_url %}
+                        <a href="{{ slot.link_url }}" target="_blank" rel="noopener sponsored" class="project-btn">Visit &#8599;</a>
+                        {% endif %}
+                    </div>
+                    <span class="ad-booked-stamp">BOOKED</span>
+                </div>
+                {% else %}
+                <div class="ad-slot vacant {{ slot.tier }}" data-slot="{{ slot.key }}" data-name="{{ slot.name }}"
+                    data-size="{{ slot.size }}" data-placement="{{ slot.placement }}" data-reach="{{ slot.reach }}">
+                    <span class="ad-slot-code">{{ slot.name }} &middot; {{ slot.size }}</span>
+                    <div class="tolet-stamp">TO-LET</div>
+                    <h3 class="ad-vacant-title">YOUR AD HERE</h3>
+                    <p class="ad-vacant-desc">{{ slot.placement }}</p>
+                    <p class="ad-vacant-reach">{{ slot.reach }}</p>
+                    <button class="bucket-btn primary ad-book-btn" data-slot="{{ slot.key }}">Book This Slot</button>
+                    <span class="ad-torn-strips"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <div class="board-footer">
+                <span class="board-note">Board owner: {{ settings_row.owner_name if settings_row else site_name }}{% if settings_row and settings_row.location %} &middot; {{ settings_row.location }}{% endif %}</span>
+                <span class="board-note">{{ settings_row.phone if settings_row else '' }} &middot; {{ settings_row.email if settings_row else '' }}</span>
+            </div>
+        </div>
+        <div class="board-legs"><span></span><span></span></div>
+
+        {% if adboard_section.body.get('cta_title') %}
+        <div class="ad-cta">
+            <div>
+                <h3 class="ad-cta-title">{{ adboard_section.body['cta_title'] }}</h3>
+                <p class="ad-cta-desc">{{ adboard_section.body.get('cta_desc', '') }}</p>
+            </div>
+            <button class="btn-glow ad-book-btn" data-slot="exclusive">{{ adboard_section.body.get('cta_button', 'Enquire About Sponsorship') }}</button>
+        </div>
+        {% endif %}
+    </section>
+    {% endif %}
+
+    {% if contact_section %}
+    <section id="contact" class="fade-up">
+        <h2 class="section-header">{{ contact_section.heading }}</h2>
+        <div class="contact-grid">
+            {% if settings_row and settings_row.email %}
+            <div class="contact-card clickable" data-copy="{{ settings_row.email }}" data-copy-message="Email address copied">
+                <span class="contact-label">Email (Click to Copy)</span>
+                <span class="contact-value">{{ settings_row.email }}</span>
+            </div>
+            {% endif %}
+            {% if settings_row and settings_row.phone %}
+            <div class="contact-card clickable" data-copy="{{ settings_row.phone }}" data-copy-message="Phone number copied">
+                <span class="contact-label">Direct Line (Click to Copy)</span>
+                <span class="contact-value">{{ settings_row.phone }}</span>
+            </div>
+            {% endif %}
+            {% if settings_row and settings_row.linkedin_url %}
+            <a href="{{ settings_row.linkedin_url }}" target="_blank" rel="noopener" class="contact-card">
+                <span class="contact-label">Professional Network</span>
+                <span class="contact-value">LinkedIn Profile &#8599;</span>
+            </a>
+            {% endif %}
+            {% if settings_row and settings_row.location %}
+            <div class="contact-card">
+                <span class="contact-label">Location</span>
+                <span class="contact-value">{{ settings_row.location }}</span>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+    {% endif %}
+
+</div>
+{% endblock %}
+
+{% block modals %}
+<div id="cli-modal" class="cli-modal">
+    <div class="cli-header">
+        <span class="cli-title">{{ (settings_row.owner_name if settings_row else site_name)|upper|replace(' ', '-') }}-OS // TERMINAL CONSOLE</span>
+        <button id="cli-close" class="cli-close-btn">&times;</button>
+    </div>
+    <div id="cli-output" class="cli-output">
+        <div class="cli-line sys-line">SYSTEM READY. Type <span class="cli-cmd">help</span> for available commands.</div>
+    </div>
+    <div class="cli-input-line">
+        <span class="cli-prompt">visitor@portfolio:~$</span>
+        <input type="text" id="cli-input" class="cli-input" placeholder="type 'help' or 'hire'..." autocomplete="off" />
+    </div>
+</div>
+
+<div id="ad-modal" class="ad-modal">
+    <div class="ad-modal-box">
+        <div class="ad-modal-header">
+            <span class="ad-modal-title">Book Advertisement Slot</span>
+            <button id="ad-modal-close" class="cli-close-btn">&times;</button>
+        </div>
+        <div class="ad-modal-body">
+            <div class="ad-modal-slot" id="ad-modal-slot"></div>
+            <form id="ad-form" class="bucket-form open">
+                <input type="hidden" id="ad-slot-key" name="slot_key" value="">
+                <div class="bucket-form-row">
+                    <label class="bucket-field">
+                        <span>Brand / Company <b class="req">*</b></span>
+                        <input type="text" id="ad-brand" required maxlength="60" placeholder="Registered company or brand name">
+                    </label>
+                    <label class="bucket-field small">
+                        <span>Contact Email <b class="req">*</b></span>
+                        <input type="email" id="ad-email" required maxlength="80" placeholder="name@company.com">
+                    </label>
+                </div>
+                <div class="bucket-form-row">
+                    <label class="bucket-field small">
+                        <span>Budget Offer <b class="req">*</b></span>
+                        <input type="number" id="ad-budget" required min="1" step="1" placeholder="e.g. 15000">
+                    </label>
+                    <label class="bucket-field small">
+                        <span>Currency</span>
+                        <select id="ad-currency">
+                            <option value="INR">INR</option>
+                            <option value="USD">USD</option>
+                            <option value="EUR">EUR</option>
+                            <option value="GBP">GBP</option>
+                        </select>
+                    </label>
+                    <label class="bucket-field small">
+                        <span>Billing Cycle</span>
+                        <select id="ad-cycle">
+                            <option value="Per month">Per month</option>
+                            <option value="Per quarter">Per quarter</option>
+                            <option value="Per year">Per year</option>
+                            <option value="One-time placement">One-time placement</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="bucket-form-row">
+                    <label class="bucket-field">
+                        <span>Message <b class="req">*</b></span>
+                        <input type="text" id="ad-message" required maxlength="200"
+                            placeholder="Campaign dates, creative format, landing page">
+                    </label>
+                </div>
+                <input type="text" id="ad-company-website" name="company_website" tabindex="-1"
+                    autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+                <p class="ad-form-note">Budget is the starting point for negotiation, not a fixed rate. Every enquiry
+                    gets a reply within 24 hours.</p>
+                <div class="bucket-form-actions">
+                    <button type="submit" id="ad-submit" class="bucket-btn primary">Send Enquiry</button>
+                    <button type="button" class="bucket-btn" data-copy="{{ settings_row.email if settings_row else '' }}"
+                        data-copy-message="Email address copied">Copy Email Instead</button>
+                </div>
+                <div id="ad-form-status" class="ad-form-status" role="status" aria-live="polite"></div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
