@@ -100,3 +100,15 @@ def test_enquiry_honeypot_rejected(client):
     )
     assert response.status_code == 400
     assert response.json()["ok"] is False
+
+
+def test_public_page_is_cacheable(client):
+    """A Set-Cookie header would make the page uncacheable at the edge."""
+    response = client.get("/")
+    assert "set-cookie" not in {k.lower() for k in response.headers}
+    assert "s-maxage" in response.headers["cache-control"]
+
+
+def test_admin_pages_still_issue_csrf_cookie(client):
+    response = client.get("/admin/login")
+    assert "portfolio_csrf" in response.headers.get("set-cookie", "")

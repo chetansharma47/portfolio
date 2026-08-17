@@ -35,6 +35,16 @@ def csrf_token_for(request: Request) -> str:
     return token
 
 
+def needs_csrf(request: Request) -> bool:
+    """Only admin pages submit forms, so only they need a CSRF cookie.
+
+    This matters beyond tidiness: a Set-Cookie header makes the response
+    uncacheable, so minting a token for every public visitor would defeat edge
+    caching and send all traffic through the function and the database.
+    """
+    return request.url.path.startswith(settings.admin_path_prefix)
+
+
 def render(
     request: Request,
     template_name: str,
@@ -43,7 +53,11 @@ def render(
     status_code: int = 200,
     headers: dict[str, str] | None = None,
 ):
-    payload: dict[str, Any] = {"request": request, "csrf_token": csrf_token_for(request)}
+    csrf_wanted = needs_csrf(request)
+    payload: dict[str, Any] = {
+        "request": request,
+        "csrf_token": csrf_token_for(request) if csrf_wanted else "",
+    }
     payload.update(context or {})
     response = templates.TemplateResponse(
         request=request,
@@ -52,7 +66,7 @@ def render(
         status_code=status_code,
         headers=headers,
     )
-    if request.cookies.get(settings.csrf_cookie_name) != payload["csrf_token"]:
+    if csrf_wanted and request.cookies.get(settings.csrf_cookie_name) != payload["csrf_token"]:
         response.set_cookie(
             settings.csrf_cookie_name,
             payload["csrf_token"],
