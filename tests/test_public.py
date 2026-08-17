@@ -112,3 +112,89 @@ def test_public_page_is_cacheable(client):
 def test_admin_pages_still_issue_csrf_cookie(client):
     response = client.get("/admin/login")
     assert "portfolio_csrf" in response.headers.get("set-cookie", "")
+
+
+def _set_slot(key: str, **values) -> None:
+    """Update an ad slot directly, for rendering tests."""
+    import asyncio
+
+    from sqlalchemy import select
+
+    from app.db.models import AdSlot
+    from app.db.session import SessionFactory
+
+    async def apply() -> None:
+        async with SessionFactory() as session:
+            slot = (await session.execute(select(AdSlot).where(AdSlot.key == key))).scalar_one()
+            for field, value in values.items():
+                setattr(slot, field, value)
+            await session.commit()
+
+    asyncio.run(apply())
+
+
+def test_booked_slot_shows_uploaded_poster(client):
+    from app.db.models import AdSlotStatus
+
+    _set_slot(
+        "panel-a",
+        status=AdSlotStatus.booked,
+        brand="Acme Cloud",
+        poster_url="https://blob.example/media/acme-poster-1234.png",
+        poster_alt="Acme Cloud spring campaign",
+        link_url="https://acme.example",
+    )
+    body = client.get("/").text
+
+    assert 'class="ad-poster"' in body
+    assert "https://blob.example/media/acme-poster-1234.png" in body
+    assert 'alt="Acme Cloud spring campaign"' in body
+    assert 'rel="noopener sponsored"' in body
+    assert "Sponsored" in body
+    # The poster replaces the placeholder, so this panel no longer advertises itself.
+    assert body.count("YOUR AD HERE") == 5
+
+    _set_slot(
+        "panel-a",
+        status=AdSlotStatus.vacant,
+        brand="",
+        poster_url="",
+        poster_alt="",
+        link_url="",
+    )
+    assert client.get("/").text.count("YOUR AD HERE") == 6
+
+
+def test_booked_slot_without_poster_uses_logo_layout(client):
+    from app.db.models import AdSlotStatus
+
+    _set_slot(
+        "panel-b",
+        status=AdSlotStatus.booked,
+        brand="Beta Tools",
+        tagline="Ship faster.",
+        logo_url="https://blob.example/media/beta-logo.png",
+    )
+    body = client.get("/").text
+
+    assert "Beta Tools" in body
+    assert "Ship faster." in body
+    assert 'class="ad-poster"' not in body
+    assert "BOOKED" in body
+
+    _set_slot("panel-b", status=AdSlotStatus.vacant, brand="", tagline="", logo_url="")
+
+
+def test_poster_alt_falls_back_to_brand(client):
+    from app.db.models import AdSlotStatus
+
+    _set_slot(
+        "strip-c",
+        status=AdSlotStatus.booked,
+        brand="Gamma Labs",
+        poster_url="https://blob.example/media/gamma.png",
+        poster_alt="",
+    )
+    assert 'alt="Gamma Labs advertisement"' in client.get("/").text
+
+    _set_slot("strip-c", status=AdSlotStatus.vacant, brand="", poster_url="")

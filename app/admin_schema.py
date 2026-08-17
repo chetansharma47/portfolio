@@ -196,8 +196,11 @@ AD_SLOT_SPEC = EntitySpec(
     label="Ad slot",
     label_plural="Advertisement Board",
     icon="megaphone",
-    columns=["position", "name", "status", "brand", "is_visible"],
-    description="Board panels. Set status to booked and fill the brand fields to run a campaign.",
+    columns=["position", "name", "status", "brand", "poster_url", "is_visible"],
+    description=(
+        "Board panels. Set status to booked, upload the advertiser's poster and add the "
+        "click-through link to run a campaign."
+    ),
     fields=[
         Field_("key", "Slot key", required=True),
         Field_("name", "Name", required=True),
@@ -208,10 +211,15 @@ AD_SLOT_SPEC = EntitySpec(
         Field_("monthly_rate", "Indicative rate"),
         Field_("status", "Status", kind="select", options=_enum_options(AdSlotStatus)),
         Field_("brand", "Brand name"),
+        Field_("poster_url", "Advertisement poster", kind="image",
+               help_text="Upload the creative the brand wants displayed. It fills the whole "
+                         "panel; the logo and tagline below are only used when no poster is set."),
+        Field_("poster_alt", "Poster alt text",
+               help_text="Describes the poster for screen readers and when the image fails to load."),
         Field_("tagline", "Brand tagline"),
-        Field_("link_url", "Brand link", kind="url"),
+        Field_("link_url", "Click-through link", kind="url"),
         Field_("logo_url", "Brand logo", kind="image",
-               help_text="Upload the brand logo or paste a hosted URL."),
+               help_text="Fallback layout only: shown with the tagline when no poster is uploaded."),
         Field_("position", "Position", kind="number"),
         Field_("is_visible", "Visible", kind="checkbox"),
     ],

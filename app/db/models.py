@@ -220,6 +220,10 @@ class AdSlot(Base, TimestampMixin):
     tagline: Mapped[str] = mapped_column(String(200), default="", nullable=False)
     link_url: Mapped[str] = mapped_column(String(255), default="", nullable=False)
     logo_url: Mapped[str] = mapped_column(String(255), default="", nullable=False)
+    # The advertiser's finished creative. When present it fills the panel and
+    # replaces the logo/tagline layout, the way a printed poster covers a board.
+    poster_url: Mapped[str] = mapped_column(String(500), default="", nullable=False)
+    poster_alt: Mapped[str] = mapped_column(String(200), default="", nullable=False)
     monthly_rate: Mapped[str] = mapped_column(String(60), default="", nullable=False)
     booked_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     position: Mapped[int] = mapped_column(Integer, default=0, nullable=False)

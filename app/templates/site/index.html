@@ -196,7 +196,22 @@
             </div>
             <div class="ad-grid" id="ad-grid">
                 {% for slot in ad_slots %}
-                {% if slot.status.value == 'booked' %}
+                {% if slot.status.value == 'booked' and slot.poster_url %}
+                {# The advertiser's own creative covers the panel, like a pasted poster. #}
+                <div class="ad-slot booked has-poster {{ slot.tier }}">
+                    {% if slot.link_url %}
+                    <a class="ad-poster-link" href="{{ slot.link_url }}" target="_blank"
+                        rel="noopener sponsored" aria-label="{{ slot.brand }} advertisement">
+                        <img class="ad-poster" src="{{ slot.poster_url }}"
+                            alt="{{ slot.poster_alt or slot.brand ~ ' advertisement' }}" loading="lazy">
+                    </a>
+                    {% else %}
+                    <img class="ad-poster" src="{{ slot.poster_url }}"
+                        alt="{{ slot.poster_alt or slot.brand ~ ' advertisement' }}" loading="lazy">
+                    {% endif %}
+                    <span class="ad-sponsored-tag">Sponsored{% if slot.brand %} &middot; {{ slot.brand }}{% endif %}</span>
+                </div>
+                {% elif slot.status.value == 'booked' %}
                 <div class="ad-slot booked {{ slot.tier }}">
                     <span class="ad-slot-code">{{ slot.name }} &middot; {{ slot.size }}</span>
                     <div class="ad-creative">

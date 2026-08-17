@@ -151,9 +151,17 @@ Two ways in:
 
 - **Media library** (`/admin/media`) — upload, copy the URL, delete. Deleting
   removes the blob as well as the row, and is recorded in the audit log.
-- **Image fields** on a content form (profile image, ad slot logo) — choose a
-  file to replace the current one, or paste a URL. Every upload is also recorded
-  in `media_assets`.
+- **Image fields** on a content form (profile image, ad slot poster and logo) —
+  choose a file to replace the current one, or paste a URL. Every upload is also
+  recorded in `media_assets`.
+
+### Running a campaign on the ad board
+
+Set the slot's status to `booked`, upload the advertiser's finished creative as
+the **advertisement poster**, add alt text and the click-through link. The poster
+fills the whole panel and carries a "Sponsored" label; outbound links use
+`rel="noopener sponsored"`. The logo plus tagline layout is the fallback used
+only when no poster has been uploaded.
 
 `app/services/storage.py` talks to the Blob HTTP API directly; there is no
 official Python SDK.
