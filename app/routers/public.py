@@ -92,7 +92,7 @@ async def home(request: Request, session: SessionDep):
             "stale-while-revalidate=300"
         )
     }
-    return render(request, "public/index.html", context, headers=headers)
+    return render(request, "site/index.html", context, headers=headers)
 
 
 @router.api_route("/api/v1/jobs/drain", methods=["GET", "POST"], include_in_schema=False)

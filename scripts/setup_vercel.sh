@@ -77,9 +77,19 @@ step "Pulling the resolved variables back"
 vercel env pull .env.vercel --environment=production --yes >/dev/null 2>&1 \
   || vercel env pull .env.vercel --yes >/dev/null 2>&1 || true
 
-DB_URL="$(sed -n 's/^DATABASE_URL_UNPOOLED=//p' .env.vercel 2>/dev/null | head -1 | tr -d '"')"
-[ -n "$DB_URL" ] || DB_URL="$(sed -n 's/^DATABASE_URL=//p' .env.vercel 2>/dev/null | head -1 | tr -d '"')"
-[ -n "$DB_URL" ] || DB_URL="$(read_env DATABASE_URL || true)"
+# Variables marked sensitive in Vercel come back as the literal "[SENSITIVE]",
+# so a pulled value is only usable if it actually looks like a connection URL.
+usable_url() { case "$1" in postgres://*|postgresql://*) return 0 ;; *) return 1 ;; esac; }
+
+DB_URL=""
+for candidate in \
+  "$(read_env DATABASE_URL_UNPOOLED || true)" \
+  "$(read_env DATABASE_URL || true)" \
+  "$(sed -n 's/^DATABASE_URL_UNPOOLED=//p' .env.vercel 2>/dev/null | head -1 | tr -d '"')" \
+  "$(sed -n 's/^DATABASE_URL=//p' .env.vercel 2>/dev/null | head -1 | tr -d '"')"
+do
+  if usable_url "$candidate"; then DB_URL="$candidate"; break; fi
+done
 
 if [ -z "$DB_URL" ]; then
   cat >&2 <<'MSG'

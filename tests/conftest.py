@@ -15,7 +15,12 @@ os.environ["SECRET_KEY"] = "test-secret"
 os.environ["ADMIN_PASSWORD"] = "TestPassword123!"
 os.environ["ADMIN_EMAIL"] = "admin@example.com"
 os.environ["ENVIRONMENT"] = "development"
+# Settings also read .env / .env.local, and environment variables win over them.
+# Anything a developer might have configured locally is blanked here so the
+# suite behaves identically on a laptop and in CI.
 os.environ["RESEND_API_KEY"] = ""
+os.environ["CRON_SECRET"] = ""
+os.environ["ANTHROPIC_API_KEY"] = ""
 
 pytest_plugins = ("pytest_asyncio",)
 

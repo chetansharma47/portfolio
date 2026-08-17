@@ -11,6 +11,9 @@ from fastapi.templating import Jinja2Templates
 from app.config import settings
 from app.security import generate_csrf_token
 
+# Note: the site templates live in templates/site, not templates/public.
+# Vercel treats any directory named "public" as static assets and strips it
+# from the function bundle, which makes those templates unfindable at runtime.
 TEMPLATE_DIR = Path(__file__).resolve().parent / "templates"
 
 templates = Jinja2Templates(directory=str(TEMPLATE_DIR))

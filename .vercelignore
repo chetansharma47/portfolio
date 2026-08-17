@@ -1,0 +1,13 @@
+# Not needed in the deployment bundle
+.venv/
+node_modules/
+__pycache__/
+*.pyc
+tests/
+scripts/
+*.db
+.env.local
+.env.vercel
+requirements-dev.txt
+pytest.ini
+README.md

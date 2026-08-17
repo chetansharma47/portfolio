@@ -66,7 +66,7 @@ def create_app() -> FastAPI:
     async def not_found(request: Request, exc):
         if request.url.path.startswith("/api/"):
             return JSONResponse({"ok": False, "error": "Not found"}, status_code=404)
-        return render(request, "public/404.html", {}, status_code=404)
+        return render(request, "site/404.html", {}, status_code=404)
 
     return app
 
