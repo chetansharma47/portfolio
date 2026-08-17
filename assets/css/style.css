@@ -8,9 +8,10 @@
     --purple-glow: #8a2be2;
     --text-main: #f0f0f0;
     --text-muted: #8892b0;
-    --font-heading: 'Syncopate', sans-serif;
-    --font-sub: 'Rajdhani', sans-serif;
-    --font-body: 'Inter', sans-serif;
+    --font-heading: 'IBM Plex Sans', 'Segoe UI', Arial, sans-serif;
+    --font-sub: 'Inter', 'Segoe UI', Arial, sans-serif;
+    --font-body: 'Inter', 'Segoe UI', Arial, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'Consolas', monospace;
 }
 
 [data-theme="light"] {
@@ -1536,4 +1537,1311 @@ section {
     .hero-title {
         font-size: 1.8rem;
     }
+}
+/* ============================================================
+   BUCKET MODULE — Skills & Future Goals
+   ============================================================ */
+
+.bucket-intro {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    line-height: 1.7;
+    max-width: 860px;
+    margin: -35px 0 40px;
+}
+
+.bucket-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+    margin-bottom: 35px;
+}
+
+.bucket-stat {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 22px 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.bucket-stat:hover {
+    border-color: var(--cyan-glow);
+    box-shadow: 0 8px 24px rgba(0, 240, 255, 0.12);
+}
+
+.bucket-stat-num {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    color: var(--cyan-glow);
+    text-shadow: 0 0 18px rgba(0, 240, 255, 0.35);
+}
+
+.bucket-stat-label {
+    display: block;
+    margin-top: 8px;
+    font-family: var(--font-sub);
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.bucket-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.bucket-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.bucket-filter {
+    font-family: var(--font-sub);
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 7px 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.bucket-filter:hover {
+    color: var(--text-main);
+    border-color: var(--cyan-glow);
+}
+
+.bucket-filter.active {
+    color: #050505;
+    background: var(--cyan-glow);
+    border-color: var(--cyan-glow);
+    font-weight: 700;
+}
+
+.bucket-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.bucket-btn {
+    font-family: var(--font-sub);
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 9px 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.bucket-btn:hover {
+    border-color: var(--cyan-glow);
+    color: var(--cyan-glow);
+    box-shadow: 0 4px 14px rgba(0, 240, 255, 0.15);
+}
+
+.bucket-btn.primary {
+    background: linear-gradient(90deg, rgba(0, 240, 255, 0.16), rgba(138, 43, 226, 0.16));
+    border-color: rgba(0, 240, 255, 0.4);
+    color: var(--cyan-glow);
+    font-weight: 700;
+}
+
+.bucket-btn.danger:hover {
+    border-color: #ef4444;
+    color: #ef4444;
+    box-shadow: 0 4px 14px rgba(239, 68, 68, 0.15);
+}
+
+/* Add / booking form */
+.bucket-form {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 26px;
+    margin-bottom: 30px;
+}
+
+.bucket-form[hidden] {
+    display: none;
+}
+
+.bucket-form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-bottom: 18px;
+}
+
+.bucket-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1 1 320px;
+}
+
+.bucket-field.small {
+    flex: 0 1 200px;
+}
+
+.bucket-field span {
+    font-family: var(--font-sub);
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.bucket-field b {
+    color: var(--cyan-glow);
+}
+
+.bucket-field input[type="text"],
+.bucket-field input[type="email"],
+.bucket-field select {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 11px 14px;
+    outline: none;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.bucket-field input:focus,
+.bucket-field select:focus {
+    border-color: var(--cyan-glow);
+    box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.12);
+}
+
+.bucket-field input[type="range"] {
+    accent-color: var(--cyan-glow);
+    width: 100%;
+}
+
+.bucket-field select option {
+    background: #0f0f14;
+    color: #f0f0f0;
+}
+
+.bucket-form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+/* Bucket cards */
+.bucket-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+}
+
+.bucket-card {
+    position: relative;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 26px;
+    overflow: hidden;
+    transition: all 0.35s ease;
+}
+
+.bucket-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--cyan-glow), transparent);
+    opacity: 0.6;
+}
+
+.bucket-card.goal::before {
+    background: linear-gradient(180deg, var(--purple-glow), transparent);
+}
+
+.bucket-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--cyan-glow);
+    box-shadow: 0 12px 30px rgba(0, 240, 255, 0.12);
+}
+
+.bucket-card.goal:hover {
+    border-color: var(--purple-glow);
+    box-shadow: 0 12px 30px rgba(138, 43, 226, 0.18);
+}
+
+.bucket-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.bucket-tag {
+    font-family: var(--font-sub);
+    font-size: 0.78rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    color: var(--cyan-glow);
+    background: rgba(0, 240, 255, 0.08);
+    border: 1px solid rgba(0, 240, 255, 0.25);
+}
+
+.bucket-tag.goal {
+    color: var(--purple-glow);
+    background: rgba(138, 43, 226, 0.1);
+    border-color: rgba(138, 43, 226, 0.3);
+}
+
+.bucket-status {
+    font-family: var(--font-sub);
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+}
+
+.bucket-status.planned {
+    color: #94a3b8;
+    background: rgba(148, 163, 184, 0.12);
+    border-color: rgba(148, 163, 184, 0.3);
+}
+
+.bucket-status.progress {
+    color: #fbbf24;
+    background: rgba(251, 191, 36, 0.12);
+    border-color: rgba(251, 191, 36, 0.3);
+}
+
+.bucket-status.done {
+    color: #22c55e;
+    background: rgba(34, 197, 94, 0.12);
+    border-color: rgba(34, 197, 94, 0.35);
+}
+
+.bucket-card-title {
+    font-family: var(--font-heading);
+    font-size: 1.05rem;
+    line-height: 1.5;
+    color: #fff;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+}
+
+.bucket-card-note {
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    line-height: 1.6;
+    margin-bottom: 18px;
+}
+
+.bucket-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: var(--font-sub);
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.bucket-percent {
+    color: var(--cyan-glow);
+    font-weight: 700;
+}
+
+.bucket-bar {
+    height: 7px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.07);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 18px;
+}
+
+.bucket-bar-fill {
+    height: 100%;
+    border-radius: 10px;
+    background: linear-gradient(90deg, var(--cyan-glow), var(--purple-glow));
+    box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+    transition: width 0.5s ease;
+}
+
+.bucket-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.bucket-mini {
+    font-family: var(--font-sub);
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.bucket-mini:hover {
+    color: var(--cyan-glow);
+    border-color: var(--cyan-glow);
+}
+
+.bucket-mini.danger:hover {
+    color: #ef4444;
+    border-color: #ef4444;
+}
+
+.bucket-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 45px 20px;
+    color: var(--text-muted);
+    font-family: var(--font-sub);
+    letter-spacing: 1px;
+    border: 1px dashed var(--border-color);
+    border-radius: 14px;
+}
+
+/* ============================================================
+   ADVERTISEMENT BOARD — real-world "TO-LET" hoarding
+   ============================================================ */
+
+.board-frame {
+    position: relative;
+    border: 6px solid rgba(0, 240, 255, 0.25);
+    border-radius: 18px;
+    padding: 0 0 20px;
+    background:
+        repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.02) 0 12px, transparent 12px 24px),
+        var(--bg-card);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45), inset 0 0 60px rgba(0, 240, 255, 0.04);
+    overflow: hidden;
+}
+
+.board-marquee {
+    overflow: hidden;
+    white-space: nowrap;
+    background: linear-gradient(90deg, rgba(0, 240, 255, 0.16), rgba(138, 43, 226, 0.16));
+    border-bottom: 2px dashed rgba(0, 240, 255, 0.3);
+    padding: 10px 0;
+    font-family: var(--font-sub);
+    font-size: 0.9rem;
+    letter-spacing: 3px;
+    color: var(--cyan-glow);
+}
+
+.board-marquee span {
+    display: inline-block;
+    padding-left: 100%;
+    animation: board-scroll 22s linear infinite;
+}
+
+@keyframes board-scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+}
+
+.ad-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 20px;
+    padding: 28px;
+}
+
+.ad-slot {
+    position: relative;
+    grid-column: span 2;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 10px;
+    padding: 30px 22px 34px;
+    border-radius: 10px;
+    border: 2px dashed rgba(0, 240, 255, 0.35);
+    background: rgba(255, 255, 255, 0.02);
+    overflow: hidden;
+    transition: all 0.35s ease;
+}
+
+.ad-slot:nth-child(2),
+.ad-slot:nth-child(3) {
+    grid-column: span 3;
+}
+
+.ad-slot.premium {
+    grid-column: 1 / -1;
+    min-height: 240px;
+    border-color: rgba(251, 191, 36, 0.5);
+    background:
+        repeating-linear-gradient(-45deg, rgba(251, 191, 36, 0.05) 0 14px, transparent 14px 28px),
+        rgba(255, 255, 255, 0.02);
+}
+
+.ad-slot:hover {
+    border-style: solid;
+    border-color: var(--cyan-glow);
+    box-shadow: 0 12px 34px rgba(0, 240, 255, 0.15);
+    transform: translateY(-4px);
+}
+
+.ad-slot-code {
+    position: absolute;
+    top: 10px;
+    left: 14px;
+    font-family: var(--font-sub);
+    font-size: 0.72rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    opacity: 0.85;
+}
+
+.tolet-stamp {
+    position: absolute;
+    top: 16px;
+    right: -42px;
+    transform: rotate(38deg);
+    background: #ef4444;
+    color: #fff;
+    font-family: var(--font-heading);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    padding: 6px 50px;
+    box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);
+}
+
+.ad-vacant-title {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    letter-spacing: 3px;
+    color: #fff;
+    text-shadow: 0 0 18px rgba(0, 240, 255, 0.35);
+    margin-top: 6px;
+}
+
+.ad-slot.premium .ad-vacant-title {
+    font-size: 1.8rem;
+}
+
+.ad-vacant-desc {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.55;
+    max-width: 420px;
+}
+
+.ad-vacant-reach {
+    font-family: var(--font-sub);
+    font-size: 0.82rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--cyan-glow);
+}
+
+.ad-book-btn {
+    margin-top: 6px;
+}
+
+/* tear-off phone-number strips, like a real to-let poster */
+.ad-torn-strips {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    gap: 4px;
+    padding: 0 10px;
+    opacity: 0.55;
+}
+
+.ad-torn-strips i {
+    flex: 1;
+    height: 16px;
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    border-bottom: none;
+    border-radius: 3px 3px 0 0;
+    background: rgba(0, 240, 255, 0.06);
+}
+
+.ad-slot:hover .ad-torn-strips i:nth-child(odd) {
+    transform: translateY(4px);
+    transition: transform 0.3s ease;
+}
+
+/* Booked slot creative */
+.ad-slot.booked {
+    border-style: solid;
+    border-color: rgba(34, 197, 94, 0.4);
+    background: rgba(34, 197, 94, 0.04);
+}
+
+.ad-creative {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.ad-logo {
+    max-height: 54px;
+    max-width: 200px;
+    object-fit: contain;
+}
+
+.ad-brand {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    color: #fff;
+}
+
+.ad-tagline {
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    max-width: 420px;
+}
+
+.ad-booked-stamp {
+    position: absolute;
+    top: 12px;
+    right: -40px;
+    transform: rotate(38deg);
+    background: #22c55e;
+    color: #052e16;
+    font-family: var(--font-heading);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    padding: 6px 48px;
+}
+
+.board-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 0 28px;
+    font-family: var(--font-sub);
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    border-top: 1px dashed var(--border-color);
+    padding-top: 16px;
+    margin: 0 0 0;
+}
+
+.board-legs {
+    display: flex;
+    justify-content: center;
+    gap: 220px;
+    margin-bottom: 40px;
+}
+
+.board-legs span {
+    width: 14px;
+    height: 60px;
+    background: linear-gradient(180deg, rgba(0, 240, 255, 0.25), transparent);
+    border-radius: 0 0 6px 6px;
+}
+
+.ad-cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 30px;
+}
+
+.ad-cta-title {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.ad-cta-desc {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    max-width: 620px;
+    line-height: 1.6;
+}
+
+/* Ad booking modal */
+.ad-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.ad-modal.open {
+    display: flex;
+}
+
+.ad-modal-box {
+    width: 100%;
+    max-width: 720px;
+    max-height: 88vh;
+    overflow-y: auto;
+    background: var(--bg-card);
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    border-radius: 14px;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.6);
+}
+
+.ad-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 22px;
+    border-bottom: 1px solid var(--border-color);
+    background: linear-gradient(90deg, rgba(0, 240, 255, 0.1), rgba(138, 43, 226, 0.1));
+}
+
+.ad-modal-title {
+    font-family: var(--font-heading);
+    font-size: 0.95rem;
+    letter-spacing: 2px;
+    color: var(--cyan-glow);
+}
+
+.ad-modal-body {
+    padding: 22px;
+}
+
+.ad-modal-slot {
+    border: 1px dashed rgba(0, 240, 255, 0.3);
+    border-radius: 10px;
+    padding: 18px;
+    margin-bottom: 20px;
+    color: var(--text-muted);
+    font-size: 0.93rem;
+    line-height: 1.7;
+}
+
+.ad-modal-slot b {
+    color: var(--text-main);
+}
+
+.ad-modal-code {
+    display: inline-block;
+    font-family: var(--font-heading);
+    font-size: 0.95rem;
+    letter-spacing: 2px;
+    color: var(--cyan-glow);
+    margin-bottom: 10px;
+}
+
+.ad-modal-hint {
+    margin-top: 10px;
+    font-size: 0.85rem;
+    opacity: 0.85;
+}
+
+.ad-modal .bucket-form {
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* ---------- Light theme overrides ---------- */
+
+[data-theme="light"] .bucket-stat,
+[data-theme="light"] .bucket-card,
+[data-theme="light"] .bucket-form,
+[data-theme="light"] .ad-cta {
+    background: #ffffff;
+    border-color: rgba(15, 23, 42, 0.12);
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.06);
+}
+
+[data-theme="light"] .bucket-card-title,
+[data-theme="light"] .ad-vacant-title,
+[data-theme="light"] .ad-brand,
+[data-theme="light"] .ad-cta-title {
+    color: #0f172a;
+    text-shadow: none;
+}
+
+[data-theme="light"] .bucket-intro,
+[data-theme="light"] .bucket-card-note,
+[data-theme="light"] .ad-vacant-desc,
+[data-theme="light"] .ad-cta-desc,
+[data-theme="light"] .ad-tagline {
+    color: #334155;
+}
+
+[data-theme="light"] .bucket-filter,
+[data-theme="light"] .bucket-btn,
+[data-theme="light"] .bucket-mini {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #0f172a;
+}
+
+[data-theme="light"] .bucket-filter.active {
+    background: #0284c7;
+    border-color: #0284c7;
+    color: #ffffff;
+}
+
+[data-theme="light"] .bucket-btn.primary {
+    background: #0284c7;
+    border-color: #0284c7;
+    color: #ffffff;
+}
+
+[data-theme="light"] .bucket-field input[type="text"],
+[data-theme="light"] .bucket-field input[type="email"],
+[data-theme="light"] .bucket-field select {
+    background: #ffffff;
+    border-color: #cbd5e1;
+    color: #0f172a;
+}
+
+[data-theme="light"] .bucket-field select option {
+    background: #ffffff;
+    color: #0f172a;
+}
+
+[data-theme="light"] .bucket-bar {
+    background: rgba(15, 23, 42, 0.08);
+}
+
+[data-theme="light"] .board-frame {
+    background: #ffffff;
+    border-color: rgba(2, 132, 199, 0.35);
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.1);
+}
+
+[data-theme="light"] .ad-slot {
+    background: #f8fafc;
+    border-color: rgba(2, 132, 199, 0.4);
+}
+
+[data-theme="light"] .ad-slot.premium {
+    background: #fffbeb;
+    border-color: rgba(217, 119, 6, 0.45);
+}
+
+[data-theme="light"] .ad-modal-box {
+    background: #ffffff;
+    border-color: #cbd5e1;
+}
+
+[data-theme="light"] .board-legs span {
+    background: linear-gradient(180deg, rgba(2, 132, 199, 0.35), transparent);
+}
+
+/* ---------- Responsive ---------- */
+
+@media screen and (max-width: 1250px) {
+    .bucket-intro {
+        margin-top: -20px;
+    }
+
+    .ad-grid {
+        grid-template-columns: repeat(2, 1fr);
+        padding: 20px;
+        gap: 16px;
+    }
+
+    .ad-slot,
+    .ad-slot:nth-child(2),
+    .ad-slot:nth-child(3) {
+        grid-column: span 1;
+    }
+
+    .ad-slot.premium {
+        grid-column: 1 / -1;
+    }
+
+    .board-legs {
+        gap: 120px;
+    }
+
+    .bucket-toolbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .ad-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ad-slot,
+    .ad-slot.premium {
+        grid-column: 1 / -1;
+        min-height: 180px;
+        padding: 26px 18px 32px;
+    }
+
+    .ad-slot.premium .ad-vacant-title {
+        font-size: 1.3rem;
+    }
+
+    .board-legs {
+        gap: 70px;
+    }
+
+    .bucket-field,
+    .bucket-field.small {
+        flex: 1 1 100%;
+    }
+
+    .bucket-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .board-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+}
+
+.cli-error { color: #ef4444; font-weight: bold; }
+
+/* Scoped border-box for the bucket & ad-board modules (site has no global reset) */
+.bucket-form,
+.bucket-form *,
+.bucket-stat,
+.bucket-card,
+.ad-slot,
+.board-frame,
+.ad-cta,
+.ad-modal-box,
+.ad-modal-box * {
+    box-sizing: border-box;
+}
+
+/* Keep the TO-LET / BOOKED ribbon clear of the slot headline */
+.ad-vacant-title,
+.ad-brand {
+    padding: 0 30px;
+}
+
+@media screen and (max-width: 700px) {
+    .tolet-stamp,
+    .ad-booked-stamp {
+        font-size: 0.62rem;
+        letter-spacing: 2px;
+        padding: 5px 40px;
+        right: -44px;
+        top: 12px;
+    }
+
+    .ad-vacant-title,
+    .ad-brand {
+        margin-top: 14px;
+        padding: 0 26px;
+    }
+}
+
+/* ============================================================
+   ENTERPRISE TYPOGRAPHY PASS
+   IBM Plex Sans for headings, Inter for UI/body, IBM Plex Mono
+   for the terminal. Tight tracking, real weights, no display
+   letter-spacing.
+   ============================================================ */
+
+body {
+    font-family: var(--font-body);
+    font-feature-settings: 'cv05', 'ss01';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.logo {
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+}
+
+.nav-links a {
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    text-transform: none;
+}
+
+.nav-resume-btn,
+.nav-cli-btn,
+.nav-theme-btn {
+    font-family: var(--font-sub);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    text-transform: none;
+}
+
+.nav-cli-btn {
+    font-family: var(--font-mono);
+}
+
+.glitch-text {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+}
+
+.hero-title {
+    font-size: 3.1rem;
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.025em;
+}
+
+.hero-desc {
+    font-size: 1.1rem;
+    font-weight: 400;
+    line-height: 1.7;
+}
+
+.availability-badge {
+    font-family: var(--font-sub);
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    text-transform: none;
+}
+
+.btn-glow,
+.btn-outline {
+    font-family: var(--font-sub);
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    text-transform: none;
+}
+
+.section-header {
+    font-size: 1.9rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    text-transform: none;
+    text-shadow: none;
+    margin-bottom: 45px;
+}
+
+.vision-text {
+    font-size: 1.05rem;
+    line-height: 1.8;
+}
+
+.skill-node-title {
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-transform: none;
+}
+
+.skill-node-title::before {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+}
+
+.pill,
+.project-tech span,
+.exp-tech-pills .pill {
+    font-family: var(--font-sub);
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0;
+}
+
+.skill-detail-box h4 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+.project-badge,
+.metric-label,
+.contact-label,
+.exp-meta {
+    font-family: var(--font-sub);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.exp-meta {
+    font-size: 0.86rem;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+}
+
+.project-title,
+.exp-role {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+}
+
+.project-desc,
+.exp-desc,
+.exp-desc li {
+    font-size: 0.95rem;
+    line-height: 1.7;
+}
+
+.project-btn {
+    font-family: var(--font-sub);
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.metric-number,
+.bucket-stat-num,
+.bucket-percent {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    text-shadow: none;
+}
+
+.metric-label,
+.bucket-stat-label {
+    font-size: 0.78rem;
+    letter-spacing: 0.07em;
+}
+
+.contact-value {
+    font-family: var(--font-sub);
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+/* Terminal keeps a real mono face */
+.cli-title {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+}
+
+.cli-output,
+.cli-input,
+.cli-prompt {
+    font-family: var(--font-mono);
+}
+
+.hud-toast {
+    font-family: var(--font-sub);
+    font-size: 0.9rem;
+    letter-spacing: 0;
+}
+
+/* Bucket + Ad Board module typography */
+.bucket-intro {
+    font-size: 1rem;
+    line-height: 1.75;
+}
+
+.bucket-card-title {
+    font-family: var(--font-heading);
+    font-size: 1.02rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.45;
+}
+
+.bucket-card-note,
+.ad-vacant-desc,
+.ad-cta-desc,
+.ad-tagline {
+    font-size: 0.92rem;
+    line-height: 1.65;
+}
+
+.bucket-tag,
+.bucket-status,
+.bucket-filter,
+.bucket-btn,
+.bucket-mini,
+.bucket-field span,
+.ad-slot-code,
+.ad-vacant-reach,
+.board-marquee,
+.board-note {
+    font-family: var(--font-sub);
+    letter-spacing: 0.04em;
+}
+
+.bucket-filter,
+.bucket-btn,
+.bucket-mini {
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    text-transform: none;
+}
+
+.bucket-meta,
+.bucket-target {
+    font-family: var(--font-sub);
+    font-size: 0.85rem;
+    letter-spacing: 0;
+    font-variant-numeric: tabular-nums;
+}
+
+.ad-vacant-title,
+.ad-brand,
+.ad-cta-title,
+.ad-modal-title,
+.ad-modal-code {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+}
+
+.ad-vacant-title {
+    font-size: 1.15rem;
+    letter-spacing: 0.02em;
+}
+
+.ad-slot.premium .ad-vacant-title {
+    font-size: 1.55rem;
+}
+
+.tolet-stamp,
+.ad-booked-stamp {
+    font-family: var(--font-sub);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+}
+
+.board-marquee {
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+}
+
+.ad-slot-code,
+.ad-vacant-reach {
+    font-weight: 600;
+    letter-spacing: 0.07em;
+}
+
+/* Enquiry form — required markers, helper note, send status */
+.bucket-field input[type="number"] {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 11px 14px;
+    outline: none;
+    width: 100%;
+    transition: all 0.3s ease;
+    font-variant-numeric: tabular-nums;
+}
+
+.bucket-field input[type="number"]:focus {
+    border-color: var(--cyan-glow);
+    box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.12);
+}
+
+.bucket-field .req {
+    color: #ef4444;
+    font-weight: 700;
+}
+
+.ad-form-note {
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+    margin: -4px 0 16px;
+}
+
+.ad-form-status {
+    margin-top: 14px;
+    font-family: var(--font-sub);
+    font-size: 0.88rem;
+    line-height: 1.5;
+    min-height: 20px;
+}
+
+.ad-form-status.pending {
+    color: var(--text-muted);
+}
+
+.ad-form-status.success {
+    color: #22c55e;
+}
+
+.ad-form-status.error {
+    color: #ef4444;
+}
+
+.bucket-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+[data-theme="light"] .bucket-field input[type="number"] {
+    background: #ffffff;
+    border-color: #cbd5e1;
+    color: #0f172a;
 }

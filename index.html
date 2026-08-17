@@ -21,8 +21,10 @@
 
     <title>Chetan Sharma | Visionary Full Stack & AI Engineer</title>
     <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
-    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Rajdhani:wght@300;500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css?v=2">
 </head>
 
 <body>
@@ -49,6 +51,8 @@
                 <li><a href="#skills">Arsenal</a></li>
                 <li><a href="#projects">Projects</a></li>
                 <li><a href="#experience">Execution</a></li>
+                <li><a href="#bucket">Bucket</a></li>
+                <li><a href="#adboard">Ad Board</a></li>
                 <li><a href="#contact">Connect</a></li>
             </ul>
             <div class="nav-actions">
@@ -414,6 +418,104 @@
             </div>
         </section>
 
+        <!-- BUCKET MODULE — Skills & Future Goals Roadmap -->
+        <section id="bucket" class="fade-up">
+            <h2 class="section-header">Bucket &amp; Roadmap</h2>
+            <p class="bucket-intro">
+                The <span class="vision-highlight">skills I am learning next</span> and the
+                <span class="vision-highlight">goals I am working towards</span>, with honest progress against each
+                one. I keep this list current instead of writing it once and forgetting it.
+            </p>
+
+            <div class="bucket-stats" id="bucket-stats"></div>
+
+            <div class="bucket-toolbar">
+                <div class="bucket-filters" id="bucket-filters">
+                    <button class="bucket-filter active" data-filter="all">All</button>
+                    <button class="bucket-filter" data-filter="skill">Skills</button>
+                    <button class="bucket-filter" data-filter="goal">Goals</button>
+                    <button class="bucket-filter" data-filter="progress">In Progress</button>
+                    <button class="bucket-filter" data-filter="done">Achieved</button>
+                </div>
+                <div class="bucket-actions">
+                    <button id="bucket-add-btn" class="bucket-btn primary">+ Add to Bucket</button>
+                    <button id="bucket-export-btn" class="bucket-btn" title="Copy bucket JSON to clipboard">Export
+                        JSON</button>
+                    <button id="bucket-reset-btn" class="bucket-btn danger" title="Restore the default bucket">Reset</button>
+                </div>
+            </div>
+
+            <form id="bucket-form" class="bucket-form" hidden>
+                <div class="bucket-form-row">
+                    <label class="bucket-field">
+                        <span>Title</span>
+                        <input type="text" id="bucket-title" maxlength="80" required
+                            placeholder="e.g. Kubernetes CKA Certification">
+                    </label>
+                    <label class="bucket-field small">
+                        <span>Type</span>
+                        <select id="bucket-type">
+                            <option value="skill">Skill</option>
+                            <option value="goal">Goal</option>
+                        </select>
+                    </label>
+                    <label class="bucket-field small">
+                        <span>Target</span>
+                        <input type="text" id="bucket-target" maxlength="30" placeholder="e.g. Q4 2026">
+                    </label>
+                </div>
+                <div class="bucket-form-row">
+                    <label class="bucket-field">
+                        <span>Why it matters</span>
+                        <input type="text" id="bucket-note" maxlength="140"
+                            placeholder="Short reason / outcome you expect">
+                    </label>
+                    <label class="bucket-field small">
+                        <span>Progress <b id="bucket-progress-val">0%</b></span>
+                        <input type="range" id="bucket-progress" min="0" max="100" step="5" value="0">
+                    </label>
+                </div>
+                <div class="bucket-form-actions">
+                    <button type="submit" class="bucket-btn primary">Save to Bucket</button>
+                    <button type="button" id="bucket-cancel-btn" class="bucket-btn">Cancel</button>
+                </div>
+            </form>
+
+            <div class="bucket-grid" id="bucket-grid"></div>
+        </section>
+
+        <!-- ADVERTISEMENT BOARD — Brand Slots (currently TO-LET) -->
+        <section id="adboard" class="fade-up">
+            <h2 class="section-header">Advertisement Board</h2>
+            <p class="bucket-intro">
+                Ad space on this portfolio is open to brands. Every panel below is an available slot, marked
+                <span class="vision-highlight">TO-LET</span> the way a hoarding is on the street. Pick a panel, send
+                your budget, and the creative goes live once we agree terms.
+            </p>
+
+            <div class="board-frame">
+                <div class="board-marquee">
+                    <span>SPACE TO LET · ADVERTISE HERE · ENQUIRE FOR RATES · SPACE TO LET · ADVERTISE HERE ·
+                        ENQUIRE FOR RATES ·</span>
+                </div>
+                <div class="ad-grid" id="ad-grid"></div>
+                <div class="board-footer">
+                    <span class="board-note">Board owner: Chetan Sharma · Mohali, Punjab, India</span>
+                    <span class="board-note">+91 8708982388 · chetansharmap7@gmail.com</span>
+                </div>
+            </div>
+            <div class="board-legs"><span></span><span></span></div>
+
+            <div class="ad-cta">
+                <div>
+                    <h3 class="ad-cta-title">Full board sponsorship</h3>
+                    <p class="ad-cta-desc">One brand across every panel, including placement inside the terminal
+                        console. Suited to a longer campaign rather than a single month.</p>
+                </div>
+                <button class="btn-glow" onclick="openAdBooking('exclusive')">Enquire About Sponsorship</button>
+            </div>
+        </section>
+
         <section id="contact" class="fade-up">
             <h2 class="section-header">Initialize Connection</h2>
             <div class="contact-grid">
@@ -455,7 +557,70 @@
         </div>
     </div>
 
-    <script src="assets/js/main.js"></script>
+    <!-- Ad Slot Booking Modal -->
+    <div id="ad-modal" class="ad-modal">
+        <div class="ad-modal-box">
+            <div class="ad-modal-header">
+                <span class="ad-modal-title">Book Advertisement Slot</span>
+                <button id="ad-modal-close" class="cli-close-btn">&times;</button>
+            </div>
+            <div class="ad-modal-body">
+                <div class="ad-modal-slot" id="ad-modal-slot"></div>
+                <form id="ad-form" class="bucket-form open">
+                    <div class="bucket-form-row">
+                        <label class="bucket-field">
+                            <span>Brand / Company <b class="req">*</b></span>
+                            <input type="text" id="ad-brand" required maxlength="60" placeholder="Registered company or brand name">
+                        </label>
+                        <label class="bucket-field small">
+                            <span>Contact Email <b class="req">*</b></span>
+                            <input type="email" id="ad-email" required maxlength="80" placeholder="name@company.com">
+                        </label>
+                    </div>
+                    <div class="bucket-form-row">
+                        <label class="bucket-field small">
+                            <span>Budget Offer <b class="req">*</b></span>
+                            <input type="number" id="ad-budget" required min="1" step="1" placeholder="e.g. 15000">
+                        </label>
+                        <label class="bucket-field small">
+                            <span>Currency</span>
+                            <select id="ad-currency">
+                                <option value="INR">INR (₹)</option>
+                                <option value="USD">USD ($)</option>
+                                <option value="EUR">EUR (€)</option>
+                                <option value="GBP">GBP (£)</option>
+                            </select>
+                        </label>
+                        <label class="bucket-field small">
+                            <span>Billing Cycle</span>
+                            <select id="ad-cycle">
+                                <option value="Per month">Per month</option>
+                                <option value="Per quarter">Per quarter</option>
+                                <option value="Per year">Per year</option>
+                                <option value="One-time placement">One-time placement</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="bucket-form-row">
+                        <label class="bucket-field">
+                            <span>Message <b class="req">*</b></span>
+                            <input type="text" id="ad-message" required maxlength="200"
+                                placeholder="Campaign dates, creative format, landing page">
+                        </label>
+                    </div>
+                    <p class="ad-form-note">Budget is the starting point for negotiation, not a fixed rate. I reply to
+                        every enquiry within 24 hours.</p>
+                    <div class="bucket-form-actions">
+                        <button type="submit" id="ad-submit" class="bucket-btn primary">Send Enquiry</button>
+                        <button type="button" class="bucket-btn" onclick="copyToClipboard('chetansharmap7@gmail.com', 'Email address copied')">Copy Email Instead</button>
+                    </div>
+                    <div id="ad-form-status" class="ad-form-status" role="status" aria-live="polite"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/main.js?v=2"></script>
 </body>
 
 </html>

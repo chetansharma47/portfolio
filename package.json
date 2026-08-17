@@ -1,0 +1,11 @@
+{
+  "name": "chetan-sharma-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Portfolio site with an advertisement board enquiry endpoint.",
+  "scripts": {
+    "dev": "vercel dev",
+    "test:api": "node api/enquiry.test.js"
+  }
+}

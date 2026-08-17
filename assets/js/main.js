@@ -318,6 +318,8 @@ function handleCliCommand(cmd) {
   <span class="cli-highlight">experience</span> - Full execution history & enterprise roles
   <span class="cli-highlight">projects</span>   - Live production SaaS, US Healthcare & Travel-Tech
   <span class="cli-highlight">skills</span>     - Java 21, Spring Boot, Angular 20 & AWS tech stack
+  <span class="cli-highlight">bucket</span>     - Skills & future goals bucket / roadmap
+  <span class="cli-highlight">ads</span>        - Advertisement board slots (TO-LET status)
   <span class="cli-highlight">contact</span>    - Direct email & phone channels
   <span class="cli-highlight">hire</span>       - Why hire Chetan Sharma?
   <span class="cli-highlight">clear</span>      - Clear console screen
@@ -356,6 +358,28 @@ Based in Mohali, Punjab, India. End-to-end production owner specializing in high
 • Databases: PostgreSQL (Query Optimization ~80%), MySQL, MSSQL
 • Cloud & Tools: AWS (SES, Lambda ~10K jobs/day, Cognito), Apache Superset, KNIME, UiPath ETL, LDAP SSO, Jitsi Video
 • AI & GenAI: Internal AI Team Member, Claude Setup, Prompt Engineering, Spring AI, LangChain4j`);
+            break;
+
+        case 'bucket':
+        case 'goals':
+            {
+                const lines = bucketItems.map(i => {
+                    const st = bucketStatus(i);
+                    const bar = '█'.repeat(Math.round(i.progress / 10)) + '░'.repeat(10 - Math.round(i.progress / 10));
+                    return `  [${i.type === 'skill' ? 'SKILL' : ' GOAL'}] ${bar} ${String(i.progress).padStart(3)}%  ${i.title} <span class="cli-highlight">(${st.label} · ${i.target})</span>`;
+                });
+                printCliLine(`Bucket — Skills & Future Goals:\n${lines.join('\n')}\n\nScroll to the <span class="cli-cmd">Bucket &amp; Roadmap</span> section to add your own entries.`);
+                document.getElementById('bucket').scrollIntoView({ behavior: 'smooth' });
+            }
+            break;
+
+        case 'ads':
+        case 'advertise':
+            {
+                const lines = AD_SLOTS.map(s => `  ${s.status === 'vacant' ? '<span class="cli-error">[TO-LET]</span>' : '<span class="cli-highlight">[BOOKED]</span>'} ${s.name} — ${s.size} | ${s.reach}`);
+                printCliLine(`Advertisement Board — brand slots:\n${lines.join('\n')}\n\nAll vacant panels are open for booking. Mail <span class="cli-highlight">chetansharmap7@gmail.com</span> or hit "Book This Slot" on the board.`);
+                document.getElementById('adboard').scrollIntoView({ behavior: 'smooth' });
+            }
             break;
 
         case 'contact':
@@ -470,3 +494,481 @@ if (mobileMenuBtn && navMenu) {
         });
     });
 }
+
+/* ============================================================
+   BUCKET MODULE — Skills & Future Goals Roadmap
+   Persisted in localStorage so entries survive reloads.
+   ============================================================ */
+
+const BUCKET_KEY = 'portfolio-bucket-v1';
+
+const DEFAULT_BUCKET = [
+    { id: 'b1', type: 'skill', title: 'Kubernetes CKA Certification', target: 'Q1 2027', note: 'Own cluster-level deployments end-to-end, not just Docker images.', progress: 35 },
+    { id: 'b2', type: 'skill', title: 'Spring AI + RAG in Production', target: 'Q4 2026', note: 'Ship a real enterprise RAG service on a vector DB with Java 21.', progress: 60 },
+    { id: 'b3', type: 'skill', title: 'AWS Solutions Architect — Associate', target: 'Q2 2027', note: 'Formalise the AWS work already done on Lambda, SES and Cognito.', progress: 20 },
+    { id: 'b4', type: 'skill', title: 'Kafka Streams & Event-Driven Design', target: 'Q3 2026', note: 'Move from request/response thinking to streaming-first architecture.', progress: 45 },
+    { id: 'b5', type: 'skill', title: 'Distributed System Design at Scale', target: 'Ongoing', note: 'HLD / LLD for multi-region, million-user systems.', progress: 55 },
+    { id: 'b6', type: 'goal', title: 'Grow into a Lead / Architect Role', target: '2027', note: 'Own architecture decisions and mentor a full engineering pod.', progress: 40 },
+    { id: 'b7', type: 'goal', title: 'Launch My Own SaaS Product', target: '2027', note: 'One product, real paying users, built and operated solo.', progress: 15 },
+    { id: 'b8', type: 'goal', title: 'Speak at a Java / AI Tech Conference', target: '2027', note: 'Talk on bridging classic Java backends with AI agents.', progress: 10 },
+    { id: 'b9', type: 'goal', title: 'Meaningful Open Source Contribution', target: 'Q4 2026', note: 'Merged PRs into a Spring / LangChain4j ecosystem project.', progress: 25 },
+    { id: 'b10', type: 'goal', title: 'Work With a Global Distributed Team', target: 'Achieved', note: 'Weekly US client ownership on healthcare and travel-tech platforms.', progress: 100 }
+];
+
+let bucketItems = loadBucket();
+let bucketFilter = 'all';
+
+function loadBucket() {
+    try {
+        const raw = localStorage.getItem(BUCKET_KEY);
+        if (!raw) return DEFAULT_BUCKET.slice();
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) && parsed.length ? parsed : DEFAULT_BUCKET.slice();
+    } catch (e) {
+        return DEFAULT_BUCKET.slice();
+    }
+}
+
+function saveBucket() {
+    try {
+        localStorage.setItem(BUCKET_KEY, JSON.stringify(bucketItems));
+    } catch (e) {
+        showToast('Storage full — bucket could not be saved');
+    }
+}
+
+function bucketStatus(item) {
+    if (item.progress >= 100) return { key: 'done', label: 'Achieved' };
+    if (item.progress > 0) return { key: 'progress', label: 'In Progress' };
+    return { key: 'planned', label: 'Planned' };
+}
+
+function matchesBucketFilter(item) {
+    if (bucketFilter === 'all') return true;
+    if (bucketFilter === 'skill' || bucketFilter === 'goal') return item.type === bucketFilter;
+    return bucketStatus(item).key === bucketFilter;
+}
+
+function escapeHtml(str) {
+    return String(str === undefined || str === null ? '' : str).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+}
+
+function renderBucket() {
+    const grid = document.getElementById('bucket-grid');
+    const stats = document.getElementById('bucket-stats');
+    if (!grid) return;
+
+    const total = bucketItems.length;
+    const done = bucketItems.filter(i => bucketStatus(i).key === 'done').length;
+    const active = bucketItems.filter(i => bucketStatus(i).key === 'progress').length;
+    const avg = total ? Math.round(bucketItems.reduce((s, i) => s + Number(i.progress || 0), 0) / total) : 0;
+
+    if (stats) {
+        stats.innerHTML =
+            '<div class="bucket-stat"><span class="bucket-stat-num">' + total + '</span><span class="bucket-stat-label">In the Bucket</span></div>' +
+            '<div class="bucket-stat"><span class="bucket-stat-num">' + active + '</span><span class="bucket-stat-label">In Progress</span></div>' +
+            '<div class="bucket-stat"><span class="bucket-stat-num">' + done + '</span><span class="bucket-stat-label">Achieved</span></div>' +
+            '<div class="bucket-stat"><span class="bucket-stat-num">' + avg + '%</span><span class="bucket-stat-label">Overall Completion</span></div>';
+    }
+
+    const visible = bucketItems.filter(matchesBucketFilter);
+
+    if (!visible.length) {
+        grid.innerHTML = '<div class="bucket-empty">Nothing in this view yet. Add the next skill or goal to the bucket.</div>';
+        return;
+    }
+
+    grid.innerHTML = visible.map(function (item) {
+        const st = bucketStatus(item);
+        return '' +
+            '<div class="bucket-card ' + item.type + '" data-id="' + escapeHtml(item.id) + '">' +
+                '<div class="bucket-card-top">' +
+                    '<span class="bucket-tag ' + item.type + '">' + (item.type === 'skill' ? 'Skill' : 'Goal') + '</span>' +
+                    '<span class="bucket-status ' + st.key + '">' + st.label + '</span>' +
+                '</div>' +
+                '<h3 class="bucket-card-title">' + escapeHtml(item.title) + '</h3>' +
+                (item.note ? '<p class="bucket-card-note">' + escapeHtml(item.note) + '</p>' : '') +
+                '<div class="bucket-meta">' +
+                    '<span class="bucket-target">Target: ' + escapeHtml(item.target || 'TBD') + '</span>' +
+                    '<span class="bucket-percent">' + item.progress + '%</span>' +
+                '</div>' +
+                '<div class="bucket-bar"><div class="bucket-bar-fill" style="width:' + item.progress + '%"></div></div>' +
+                '<div class="bucket-card-actions">' +
+                    '<button class="bucket-mini" data-act="dec" title="Decrease progress">&minus;10%</button>' +
+                    '<button class="bucket-mini" data-act="inc" title="Increase progress">+10%</button>' +
+                    '<button class="bucket-mini" data-act="done" title="Mark as achieved">Mark Done</button>' +
+                    '<button class="bucket-mini danger" data-act="del" title="Remove from bucket">Remove</button>' +
+                '</div>' +
+            '</div>';
+    }).join('');
+}
+
+const bucketGrid = document.getElementById('bucket-grid');
+if (bucketGrid) {
+    bucketGrid.addEventListener('click', (e) => {
+        const btn = e.target.closest('.bucket-mini');
+        if (!btn) return;
+        const card = btn.closest('.bucket-card');
+        const item = bucketItems.find(i => i.id === card.dataset.id);
+        if (!item) return;
+
+        const act = btn.dataset.act;
+        if (act === 'inc') item.progress = Math.min(100, Number(item.progress) + 10);
+        else if (act === 'dec') item.progress = Math.max(0, Number(item.progress) - 10);
+        else if (act === 'done') item.progress = 100;
+        else if (act === 'del') {
+            bucketItems = bucketItems.filter(i => i.id !== item.id);
+            showToast('Removed from bucket');
+        }
+
+        if (act === 'done') showToast('Achieved: ' + item.title);
+        saveBucket();
+        renderBucket();
+    });
+}
+
+const bucketFiltersBox = document.getElementById('bucket-filters');
+if (bucketFiltersBox) {
+    bucketFiltersBox.addEventListener('click', (e) => {
+        const btn = e.target.closest('.bucket-filter');
+        if (!btn) return;
+        bucketFiltersBox.querySelectorAll('.bucket-filter').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        bucketFilter = btn.dataset.filter;
+        renderBucket();
+    });
+}
+
+const bucketForm = document.getElementById('bucket-form');
+const bucketAddBtn = document.getElementById('bucket-add-btn');
+const bucketCancelBtn = document.getElementById('bucket-cancel-btn');
+const bucketProgressInput = document.getElementById('bucket-progress');
+
+function toggleBucketForm(open) {
+    if (!bucketForm) return;
+    bucketForm.hidden = !open;
+    bucketForm.classList.toggle('open', open);
+    if (open) document.getElementById('bucket-title').focus();
+}
+
+if (bucketAddBtn) bucketAddBtn.addEventListener('click', () => toggleBucketForm(bucketForm.hidden));
+if (bucketCancelBtn) bucketCancelBtn.addEventListener('click', () => { bucketForm.reset(); toggleBucketForm(false); });
+
+if (bucketProgressInput) {
+    bucketProgressInput.addEventListener('input', () => {
+        document.getElementById('bucket-progress-val').textContent = bucketProgressInput.value + '%';
+    });
+}
+
+if (bucketForm) {
+    bucketForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const title = document.getElementById('bucket-title').value.trim();
+        if (!title) return;
+
+        bucketItems.unshift({
+            id: 'b' + Date.now(),
+            type: document.getElementById('bucket-type').value,
+            title: title,
+            target: document.getElementById('bucket-target').value.trim() || 'TBD',
+            note: document.getElementById('bucket-note').value.trim(),
+            progress: Number(bucketProgressInput.value)
+        });
+
+        saveBucket();
+        renderBucket();
+        bucketForm.reset();
+        document.getElementById('bucket-progress-val').textContent = '0%';
+        toggleBucketForm(false);
+        showToast('Added to the bucket');
+    });
+}
+
+const bucketExportBtn = document.getElementById('bucket-export-btn');
+if (bucketExportBtn) {
+    bucketExportBtn.addEventListener('click', () => {
+        copyToClipboard(JSON.stringify(bucketItems, null, 2), 'Bucket JSON copied. Paste it into DEFAULT_BUCKET in main.js to publish it.');
+    });
+}
+
+const bucketResetBtn = document.getElementById('bucket-reset-btn');
+if (bucketResetBtn) {
+    bucketResetBtn.addEventListener('click', () => {
+        if (!confirm('Reset the bucket to the default list? Anything you added locally will be lost.')) return;
+        bucketItems = DEFAULT_BUCKET.slice();
+        saveBucket();
+        renderBucket();
+        showToast('Bucket reset to defaults');
+    });
+}
+
+renderBucket();
+
+
+/* ============================================================
+   ADVERTISEMENT BOARD — Brand slots, currently TO-LET
+   To fill a slot: set status to 'booked' and add
+   brand / tagline / link / logo on that slot object.
+   ============================================================ */
+
+const AD_SLOTS = [
+    {
+        id: 'prime-billboard',
+        name: 'Prime Billboard',
+        size: '970 x 250 — Full Width',
+        placement: 'Top panel, full width across the board',
+        reach: 'Highest visibility on the page',
+        status: 'vacant',
+        tier: 'premium'
+    },
+    {
+        id: 'panel-a',
+        name: 'Panel A',
+        size: '468 x 200 — Half Width',
+        placement: 'Left board panel, upper row',
+        reach: 'Recruiters and engineering leads',
+        status: 'vacant'
+    },
+    {
+        id: 'panel-b',
+        name: 'Panel B',
+        size: '468 x 200 — Half Width',
+        placement: 'Right board panel, upper row',
+        reach: 'Dev-tool and SaaS audience',
+        status: 'vacant'
+    },
+    {
+        id: 'strip-c',
+        name: 'Strip C',
+        size: '320 x 140 — Compact',
+        placement: 'Lower board strip, left',
+        reach: 'Startups and local businesses',
+        status: 'vacant'
+    },
+    {
+        id: 'strip-d',
+        name: 'Strip D',
+        size: '320 x 140 — Compact',
+        placement: 'Lower board strip, centre',
+        reach: 'Bootcamps, courses and communities',
+        status: 'vacant'
+    },
+    {
+        id: 'strip-e',
+        name: 'Strip E',
+        size: '320 x 140 — Compact',
+        placement: 'Lower board strip, right',
+        reach: 'Agencies and freelance networks',
+        status: 'vacant'
+    }
+];
+
+function renderAdBoard() {
+    const grid = document.getElementById('ad-grid');
+    if (!grid) return;
+
+    grid.innerHTML = AD_SLOTS.map(function (slot) {
+        if (slot.status === 'booked') {
+            return '' +
+                '<div class="ad-slot booked ' + (slot.tier || '') + '">' +
+                    '<span class="ad-slot-code">' + escapeHtml(slot.name) + ' &middot; ' + escapeHtml(slot.size) + '</span>' +
+                    '<div class="ad-creative">' +
+                        (slot.logo ? '<img src="' + escapeHtml(slot.logo) + '" alt="' + escapeHtml(slot.brand) + '" class="ad-logo">' : '') +
+                        '<h3 class="ad-brand">' + escapeHtml(slot.brand) + '</h3>' +
+                        '<p class="ad-tagline">' + escapeHtml(slot.tagline) + '</p>' +
+                        (slot.link ? '<a href="' + escapeHtml(slot.link) + '" target="_blank" rel="noopener sponsored" class="project-btn">Visit &#8599;</a>' : '') +
+                    '</div>' +
+                    '<span class="ad-booked-stamp">BOOKED</span>' +
+                '</div>';
+        }
+        return '' +
+            '<div class="ad-slot vacant ' + (slot.tier || '') + '" data-slot="' + escapeHtml(slot.id) + '">' +
+                '<span class="ad-slot-code">' + escapeHtml(slot.name) + ' &middot; ' + escapeHtml(slot.size) + '</span>' +
+                '<div class="tolet-stamp">TO-LET</div>' +
+                '<h3 class="ad-vacant-title">YOUR AD HERE</h3>' +
+                '<p class="ad-vacant-desc">' + escapeHtml(slot.placement) + '</p>' +
+                '<p class="ad-vacant-reach">' + escapeHtml(slot.reach) + '</p>' +
+                '<button class="bucket-btn primary ad-book-btn" data-slot="' + escapeHtml(slot.id) + '">Book This Slot</button>' +
+                '<span class="ad-torn-strips"><i></i><i></i><i></i><i></i><i></i><i></i></span>' +
+            '</div>';
+    }).join('');
+}
+
+const adGrid = document.getElementById('ad-grid');
+if (adGrid) {
+    adGrid.addEventListener('click', (e) => {
+        const btn = e.target.closest('.ad-book-btn');
+        if (btn) openAdBooking(btn.dataset.slot);
+    });
+}
+
+const adModal = document.getElementById('ad-modal');
+const adModalClose = document.getElementById('ad-modal-close');
+let activeAdSlot = null;
+
+function openAdBooking(slotId) {
+    if (!adModal) return;
+    activeAdSlot = AD_SLOTS.find(s => s.id === slotId) || {
+        id: 'exclusive',
+        name: 'Exclusive Board Sponsorship',
+        size: 'Every panel on the board',
+        placement: 'Every panel on the board, single brand',
+        reach: 'All portfolio traffic'
+    };
+
+    const box = document.getElementById('ad-modal-slot');
+    if (box) {
+        box.innerHTML =
+            '<span class="ad-modal-code">' + escapeHtml(activeAdSlot.name) + '</span>' +
+            '<p><b>Size:</b> ' + escapeHtml(activeAdSlot.size) + '</p>' +
+            '<p><b>Placement:</b> ' + escapeHtml(activeAdSlot.placement) + '</p>' +
+            '<p><b>Audience:</b> ' + escapeHtml(activeAdSlot.reach) + '</p>' +
+            '<p class="ad-modal-hint">Rates are negotiated per campaign. Share the budget you have in mind and I will reply with availability, creative specs and terms.</p>';
+    }
+
+    adModal.classList.add('open');
+    const brandInput = document.getElementById('ad-brand');
+    if (brandInput) brandInput.focus();
+}
+
+function closeAdBooking() {
+    if (adModal) adModal.classList.remove('open');
+}
+
+if (adModalClose) adModalClose.addEventListener('click', closeAdBooking);
+if (adModal) {
+    adModal.addEventListener('click', (e) => { if (e.target === adModal) closeAdBooking(); });
+}
+
+document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    closeAdBooking();
+    if (cliModal) cliModal.classList.remove('open');
+});
+
+/* Enquiries post to the site's own serverless endpoint (api/enquiry.js),
+   which sends the mail through the Resend API. Nothing is routed through a
+   third-party form relay, and the API key never reaches the browser. */
+const OWNER_EMAIL = 'chetansharmap7@gmail.com';
+const ENQUIRY_ENDPOINT = '/api/enquiry';
+
+const adForm = document.getElementById('ad-form');
+const adSubmitBtn = document.getElementById('ad-submit');
+const adStatusBox = document.getElementById('ad-form-status');
+
+function setEnquiryStatus(text, state) {
+    if (!adStatusBox) return;
+    adStatusBox.textContent = text;
+    adStatusBox.className = 'ad-form-status' + (state ? ' ' + state : '');
+}
+
+function buildEnquiryText(data) {
+    return [
+        'Brand / Company: ' + data.brand,
+        'Contact Email: ' + data.email,
+        'Budget Offer: ' + data.budget + ' ' + data.currency + ' (' + data.cycle + ')',
+        'Slot Requested: ' + data.slotName + ' (' + data.slotSize + ')',
+        'Placement: ' + data.placement,
+        '',
+        'Message: ' + data.message
+    ].join('\n');
+}
+
+if (adForm) {
+    adForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const slot = activeAdSlot || {};
+        const data = {
+            brand: document.getElementById('ad-brand').value.trim(),
+            email: document.getElementById('ad-email').value.trim(),
+            budget: document.getElementById('ad-budget').value.trim(),
+            currency: document.getElementById('ad-currency').value,
+            cycle: document.getElementById('ad-cycle').value,
+            message: document.getElementById('ad-message').value.trim(),
+            slotName: slot.name || 'Portfolio Board',
+            slotSize: slot.size || 'N/A',
+            placement: slot.placement || 'N/A'
+        };
+
+        if (!data.brand || !data.email || !data.budget || !data.message) {
+            setEnquiryStatus('Brand, email, budget and message are all required.', 'error');
+            return;
+        }
+
+        const subject = 'Ad Slot Enquiry: ' + data.slotName + ' — ' + data.brand +
+            ' (' + data.budget + ' ' + data.currency + ' ' + data.cycle.toLowerCase() + ')';
+
+        const mailtoFallback = 'mailto:' + OWNER_EMAIL + '?subject=' + encodeURIComponent(subject) +
+            '&body=' + encodeURIComponent(buildEnquiryText(data));
+
+        /* The send endpoint only exists on the deployed site, so a copy opened
+           straight off disk hands the enquiry to the mail app instead. */
+        if (window.location.protocol === 'file:') {
+            setEnquiryStatus('Direct send needs the published site, not a local file copy. Opening your mail app with the same details.', 'error');
+            window.location.href = mailtoFallback;
+            return;
+        }
+
+        if (adSubmitBtn) {
+            adSubmitBtn.disabled = true;
+            adSubmitBtn.textContent = 'Sending...';
+        }
+        setEnquiryStatus('Sending your enquiry...', 'pending');
+
+        fetch(ENQUIRY_ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({
+                brand: data.brand,
+                email: data.email,
+                budget: data.budget,
+                currency: data.currency,
+                cycle: data.cycle,
+                message: data.message,
+                slotName: data.slotName,
+                slotSize: data.slotSize,
+                placement: data.placement
+            })
+        })
+            .then(function (res) {
+                return res.json().catch(function () { return {}; }).then(function (body) {
+                    if (!res.ok || body.ok !== true) {
+                        throw new Error(body.error || ('Request failed (' + res.status + ')'));
+                    }
+                    return body;
+                });
+            })
+            .then(function () {
+                setEnquiryStatus('Enquiry sent. You will get a reply within 24 hours.', 'success');
+                showToast('Enquiry sent to Chetan Sharma');
+                adForm.reset();
+                setTimeout(function () {
+                    closeAdBooking();
+                    setEnquiryStatus('', '');
+                }, 2200);
+            })
+            .catch(function (err) {
+                const reason = (err && err.message) ? err.message : 'network error';
+                console.error('Ad enquiry direct send failed:', reason);
+
+                if (/not configured/i.test(reason)) {
+                    setEnquiryStatus('The mail service is not configured on the server yet. Opening your mail app so this enquiry still reaches him.', 'error');
+                } else {
+                    setEnquiryStatus('Could not send directly (' + reason + '). Opening your mail app with the same details.', 'error');
+                }
+
+                window.location.href = mailtoFallback;
+            })
+            .then(function () {
+                if (adSubmitBtn) {
+                    adSubmitBtn.disabled = false;
+                    adSubmitBtn.textContent = 'Send Enquiry';
+                }
+            });
+    });
+}
+
+renderAdBoard();
