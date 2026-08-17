@@ -297,11 +297,18 @@ async def _collect_form_values(
         raw = form.get(field_.name)
 
         if field_.kind == "image":
+            # Upload wins; otherwise keep the hidden current value, unless the
+            # editor ticked "remove", which clears the field.
             upload = form.get(f"{field_.name}__file")
             stored_url = await _store_upload(
                 upload, session, user_id=user_id, used_for=f"{spec.key}.{field_.name}"
             )
-            values[field_.name] = stored_url or (str(raw).strip() if raw else "")
+            if stored_url:
+                values[field_.name] = stored_url
+            elif form.get(f"{field_.name}__clear"):
+                values[field_.name] = ""
+            else:
+                values[field_.name] = str(raw).strip() if raw else ""
             continue
 
         if hasattr(raw, "filename"):  # stray file input for a non-image field

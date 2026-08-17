@@ -66,9 +66,17 @@
                 <div class="admin-image-preview empty">No image</div>
                 {% endif %}
                 <div class="admin-image-inputs">
-                    <input type="file" name="{{ field.name }}__file" accept="image/*">
-                    <input type="text" id="f-{{ field.name }}" name="{{ field.name }}"
-                        value="{{ current }}" placeholder="https://... or assets/images/file.jpg">
+                    <input type="file" id="f-{{ field.name }}" name="{{ field.name }}__file"
+                        accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml,image/avif">
+                    {# The current value rides along so an unchanged field keeps its image. #}
+                    <input type="hidden" name="{{ field.name }}" value="{{ current }}">
+                    {% if current %}
+                    <label class="admin-switch">
+                        <input type="checkbox" name="{{ field.name }}__clear" value="1">
+                        <span>Remove current image on save</span>
+                    </label>
+                    <span class="admin-help admin-image-path">{{ current|truncate(72) }}</span>
+                    {% endif %}
                 </div>
             </div>
 

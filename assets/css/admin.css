@@ -767,3 +767,13 @@ a {
     background: #f8fafc;
     color: var(--a-muted);
 }
+
+.admin-image-path {
+    font-family: var(--a-mono);
+    font-size: 11px;
+    word-break: break-all;
+}
+
+.admin-image-inputs input[type="file"] {
+    font-size: 13px;
+}

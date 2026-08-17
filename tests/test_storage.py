@@ -220,3 +220,78 @@ async def test_outbound_http_is_blocked_in_tests(monkeypatch):
     monkeypatch.setattr(settings, "blob_read_write_token", "looks-real")
     with pytest.raises(RuntimeError, match="Outbound HTTP is blocked"):
         await storage.upload_image("logo.png", PNG_BYTES, "image/png")
+
+
+def test_image_field_clear_checkbox_empties_the_value(admin_client, monkeypatch):
+    """Ticking "remove" wins over the hidden current value."""
+    async def fake_put(self, url, content=None, headers=None, **kwargs):
+        return httpx.Response(
+            200,
+            json={"url": "https://blob.example/media/logo-55667788.png",
+                  "pathname": "media/logo-55667788.png"},
+            request=httpx.Request("PUT", url),
+        )
+
+    monkeypatch.setattr(settings, "blob_read_write_token", "test-token")
+    monkeypatch.setattr(httpx.AsyncClient, "put", fake_put)
+
+    slot_id = sqlite3.connect(TEST_DB).execute(
+        "select id from ad_slots where key = 'panel-b'"
+    ).fetchone()[0]
+
+    base = {
+        "csrf_token": admin_client.csrf_token,
+        "key": "panel-b",
+        "name": "Panel B",
+        "status": "booked",
+        "brand": "Beta Tools",
+    }
+
+    # 1. upload a logo
+    response = admin_client.post(
+        f"/admin/content/ad-slots/{slot_id}",
+        data=base,
+        files={"logo_url__file": ("logo.png", PNG_BYTES, "image/png")},
+        follow_redirects=False,
+    )
+    assert response.status_code == 303
+    stored = sqlite3.connect(TEST_DB).execute(
+        "select logo_url from ad_slots where id = ?", (slot_id,)
+    ).fetchone()[0]
+    assert stored == "https://blob.example/media/logo-55667788.png"
+
+    # 2. save again with the hidden value present: the image stays
+    response = admin_client.post(
+        f"/admin/content/ad-slots/{slot_id}",
+        data={**base, "logo_url": stored},
+        follow_redirects=False,
+    )
+    assert response.status_code == 303
+    assert sqlite3.connect(TEST_DB).execute(
+        "select logo_url from ad_slots where id = ?", (slot_id,)
+    ).fetchone()[0] == stored
+
+    # 3. tick remove: the field is cleared
+    response = admin_client.post(
+        f"/admin/content/ad-slots/{slot_id}",
+        data={**base, "logo_url": stored, "logo_url__clear": "1"},
+        follow_redirects=False,
+    )
+    assert response.status_code == 303
+    assert sqlite3.connect(TEST_DB).execute(
+        "select logo_url from ad_slots where id = ?", (slot_id,)
+    ).fetchone()[0] == ""
+
+
+def test_image_field_form_offers_upload_not_a_url_box(admin_client):
+    slot_id = sqlite3.connect(TEST_DB).execute(
+        "select id from ad_slots where key = 'panel-a'"
+    ).fetchone()[0]
+    body = admin_client.get(f"/admin/content/ad-slots/{slot_id}").text
+
+    # File inputs for both images, and no free-text box for either.
+    assert 'name="poster_url__file"' in body
+    assert 'name="logo_url__file"' in body
+    assert 'type="text" id="f-logo_url"' not in body
+    assert 'type="text" id="f-poster_url"' not in body
+    assert 'type="hidden" name="logo_url"' in body

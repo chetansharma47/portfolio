@@ -212,14 +212,15 @@ AD_SLOT_SPEC = EntitySpec(
         Field_("status", "Status", kind="select", options=_enum_options(AdSlotStatus)),
         Field_("brand", "Brand name"),
         Field_("poster_url", "Advertisement poster", kind="image",
-               help_text="Upload the creative the brand wants displayed. It fills the whole "
-                         "panel; the logo and tagline below are only used when no poster is set."),
+               help_text="Upload the creative the brand supplied. It fills the whole panel; "
+                         "the logo and tagline below are only used when no poster is set."),
         Field_("poster_alt", "Poster alt text",
                help_text="Describes the poster for screen readers and when the image fails to load."),
         Field_("tagline", "Brand tagline"),
         Field_("link_url", "Click-through link", kind="url"),
         Field_("logo_url", "Brand logo", kind="image",
-               help_text="Fallback layout only: shown with the tagline when no poster is uploaded."),
+               help_text="Upload the brand logo. Used with the tagline only when no poster "
+                         "has been uploaded."),
         Field_("position", "Position", kind="number"),
         Field_("is_visible", "Visible", kind="checkbox"),
     ],
@@ -247,7 +248,7 @@ SETTINGS_SPEC = EntitySpec(
         Field_("github_url", "GitHub URL", kind="url"),
         Field_("resume_url", "Resume URL", kind="url"),
         Field_("profile_image", "Profile image", kind="image",
-               help_text="Upload a new image, or paste a URL/path. Uploads go to Vercel Blob."),
+               help_text="Upload a new photo to replace the current one. Stored in Vercel Blob."),
         Field_("availability_note", "Availability badge"),
         Field_("default_theme", "Default theme", kind="select",
                options=[("dark", "Dark"), ("light", "Light")]),
@@ -307,8 +308,8 @@ def parse_form_value(field_: Field_, raw: str | None) -> Any:
     if field_.kind == "select" and field_.name == "group_id":
         return int(value) if value else None
 
-    # "image" carries the existing URL as text; an uploaded file, when present,
-    # replaces it in the router before this value is stored.
+    # "image" arrives as a hidden field holding the current value. The router
+    # replaces it with an uploaded file's URL, or clears it on request.
     if field_.kind == "image":
         return value
 
