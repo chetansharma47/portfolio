@@ -295,3 +295,36 @@ def test_image_field_form_offers_upload_not_a_url_box(admin_client):
     assert 'type="text" id="f-logo_url"' not in body
     assert 'type="text" id="f-poster_url"' not in body
     assert 'type="hidden" name="logo_url"' in body
+
+
+def test_image_field_shows_filename_not_url(admin_client):
+    """The caption under an image must not read like a URL input."""
+    import asyncio
+
+    from sqlalchemy import select
+
+    from app.db.models import AdSlot
+    from app.db.session import SessionFactory
+
+    external = "https://brand.example/wp-content/uploads/2025/09/Logo-Png.png"
+
+    async def set_logo(value: str) -> int:
+        async with SessionFactory() as session:
+            slot = (await session.execute(select(AdSlot).where(AdSlot.key == "strip-d"))).scalar_one()
+            slot.logo_url = value
+            await session.commit()
+            return slot.id
+
+    slot_id = asyncio.run(set_logo(external))
+    body = admin_client.get(f"/admin/content/ad-slots/{slot_id}").text
+
+    assert "Current file: Logo-Png.png" in body
+    assert "external link" in body
+    assert "brand.example/wp-content" not in body.split("Current file:")[1][:200]
+
+    slot_id = asyncio.run(set_logo("https://abc123.public.blob.vercel-storage.com/media/logo-99.png"))
+    body = admin_client.get(f"/admin/content/ad-slots/{slot_id}").text
+    assert "Current file: logo-99.png" in body
+    assert "uploaded" in body
+
+    asyncio.run(set_logo(""))

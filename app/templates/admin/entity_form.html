@@ -75,7 +75,15 @@
                         <input type="checkbox" name="{{ field.name }}__clear" value="1">
                         <span>Remove current image on save</span>
                     </label>
-                    <span class="admin-help admin-image-path">{{ current|truncate(72) }}</span>
+                    {# Filename only: showing the full URL made this look like a URL input. #}
+                    <span class="admin-help admin-image-path">
+                        Current file: {{ current.rstrip('/').split('/')|last|truncate(40) }}
+                        {% if 'blob.vercel-storage.com' in current %}
+                        <span class="admin-chip on">uploaded</span>
+                        {% else %}
+                        <span class="admin-chip off">external link</span>
+                        {% endif %}
+                    </span>
                     {% endif %}
                 </div>
             </div>
