@@ -212,3 +212,11 @@ def test_image_field_keeps_url_when_no_file_uploaded(admin_client):
         "select profile_image from site_settings where id = ?", (settings_id,)
     ).fetchone()[0]
     assert stored == "assets/images/profile.jpg"
+
+
+@pytest.mark.asyncio
+async def test_outbound_http_is_blocked_in_tests(monkeypatch):
+    """The guard must stop a real request even when a token is configured."""
+    monkeypatch.setattr(settings, "blob_read_write_token", "looks-real")
+    with pytest.raises(RuntimeError, match="Outbound HTTP is blocked"):
+        await storage.upload_image("logo.png", PNG_BYTES, "image/png")

@@ -54,6 +54,24 @@ def fresh_database():
             pass
 
 
+@pytest.fixture(autouse=True)
+def block_outbound_http(monkeypatch):
+    """Fail loudly instead of calling a real API from a test.
+
+    Blanking credentials is not enough on its own: a credential present in a
+    developer's .env.local once let a validation test perform a genuine upload
+    to the production blob store. Tests that need a response stub
+    httpx.AsyncClient.put/post directly, which bypasses send().
+    """
+
+    async def refuse(*args, **kwargs):
+        raise RuntimeError(
+            "Outbound HTTP is blocked in tests. Stub httpx.AsyncClient.put/post instead."
+        )
+
+    monkeypatch.setattr("httpx.AsyncClient.send", refuse)
+
+
 @pytest.fixture
 def client():
     from fastapi.testclient import TestClient
