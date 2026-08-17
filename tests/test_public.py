@@ -1,0 +1,102 @@
+"""Public site and enquiry endpoint."""
+
+from __future__ import annotations
+
+
+def test_health(client):
+    response = client.get("/healthz")
+    assert response.status_code == 200
+    assert response.json()["status"] == "ok"
+
+
+def test_home_renders_seeded_content(client):
+    response = client.get("/")
+    assert response.status_code == 200
+    body = response.text
+
+    # Sections, projects, experience and ad slots all come from the database.
+    assert "Chetan Sharma" in body
+    assert "Technical Arsenal" in body
+    assert "WhiteLabel Enterprise Web Platform" in body
+    assert "Revelex" in body
+    assert "TO-LET" in body
+    assert "Bucket &amp; Roadmap" in body or "Bucket & Roadmap" in body
+    assert "s-maxage" in response.headers["cache-control"]
+
+
+def test_home_hides_invisible_section(client):
+    """Toggling is_visible removes a section from the public page."""
+    import asyncio
+
+    from sqlalchemy import select
+
+    from app.db.models import Section
+    from app.db.session import SessionFactory
+
+    async def hide(key: str, visible: bool) -> None:
+        async with SessionFactory() as session:
+            result = await session.execute(select(Section).where(Section.key == key))
+            section = result.scalar_one()
+            section.is_visible = visible
+            await session.commit()
+
+    asyncio.run(hide("adboard", False))
+    assert "TO-LET" not in client.get("/").text
+
+    asyncio.run(hide("adboard", True))
+    assert "TO-LET" in client.get("/").text
+
+
+def test_enquiry_is_stored(client):
+    payload = {
+        "brand": "Acme Cloud",
+        "email": "ads@acme.com",
+        "budget": 25000,
+        "currency": "INR",
+        "cycle": "Per month",
+        "message": "Q1 campaign, static banner",
+        "slot_key": "panel-b",
+    }
+    response = client.post("/api/v1/enquiries", json=payload)
+    assert response.status_code == 201
+    body = response.json()
+    assert body["ok"] is True
+    # No mail key in tests, so nothing was delivered, but the row must exist.
+    assert body["delivered"] is False
+
+    import sqlite3
+
+    from tests.conftest import TEST_DB
+
+    rows = list(
+        sqlite3.connect(TEST_DB).execute(
+            "select brand, slot_name, budget_amount, mail_sent from enquiries"
+        )
+    )
+    assert ("Acme Cloud", "Panel B", 25000, 0) in rows
+
+
+def test_enquiry_validation(client):
+    bad_cases = [
+        {"brand": "", "email": "a@b.com", "budget": 10, "message": "x"},
+        {"brand": "A", "email": "not-an-email", "budget": 10, "message": "x"},
+        {"brand": "A", "email": "a@b.com", "budget": 0, "message": "x"},
+        {"brand": "A", "email": "a@b.com", "budget": 10, "message": ""},
+    ]
+    for payload in bad_cases:
+        assert client.post("/api/v1/enquiries", json=payload).status_code == 422
+
+
+def test_enquiry_honeypot_rejected(client):
+    response = client.post(
+        "/api/v1/enquiries",
+        json={
+            "brand": "Bot",
+            "email": "bot@spam.com",
+            "budget": 10,
+            "message": "spam",
+            "company_website": "filled-by-bot",
+        },
+    )
+    assert response.status_code == 400
+    assert response.json()["ok"] is False

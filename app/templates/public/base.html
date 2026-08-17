@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{{ (settings_row.default_theme if settings_row else 'dark') }}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ settings_row.meta_description if settings_row else '' }}">
+    <meta name="theme-color" content="#050505">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ settings_row.meta_title if settings_row else site_name }}">
+    <meta property="og:description" content="{{ settings_row.meta_description if settings_row else '' }}">
+    <meta property="og:image" content="/{{ settings_row.profile_image if settings_row else 'assets/images/profile.jpg' }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ settings_row.meta_title if settings_row else site_name }}">
+    <meta name="twitter:description" content="{{ settings_row.meta_description if settings_row else '' }}">
+
+    <title>{% block title %}{{ settings_row.meta_title if settings_row else site_name }}{% endblock %}</title>
+    <link rel="icon" href="/assets/images/favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/style.css?v=3">
+</head>
+
+<body>
+
+    <div class="bg-base-layer"></div>
+    <div class="ambient-glow-spots">
+        <div class="glow-spot spot-1"></div>
+        <div class="glow-spot spot-2"></div>
+    </div>
+    <div class="cyber-grid-layer"></div>
+    <canvas id="neural-canvas"></canvas>
+    <div class="overlay"></div>
+
+    <nav>
+        <a href="/" class="logo">{{ (settings_row.owner_name if settings_row else site_name)|upper }}</a>
+        <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Toggle Navigation Menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+        <div class="nav-menu" id="nav-menu">
+            <ul class="nav-links">
+                {% for section in nav_sections %}
+                <li><a href="#{{ section.key }}">{{ section.nav_label or section.heading }}</a></li>
+                {% endfor %}
+            </ul>
+            <div class="nav-actions">
+                <button id="cli-trigger" class="nav-cli-btn" title="Open Interactive Terminal">&gt;_ CLI</button>
+                <button id="theme-toggle" class="nav-theme-btn" title="Toggle Dark/Light Theme">&#9728;</button>
+                {% if settings_row and settings_row.resume_url %}
+                <a href="{{ settings_row.resume_url }}" class="nav-resume-btn">Resume</a>
+                {% else %}
+                <a href="mailto:{{ settings_row.email if settings_row else '' }}?subject=Resume%20Request" class="nav-resume-btn">Resume</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    {% block content %}{% endblock %}
+
+    <div id="hud-toast" class="hud-toast"></div>
+
+    {% block modals %}{% endblock %}
+
+    <script id="site-data" type="application/json">{{ site_data|tojson }}</script>
+    <script src="/assets/js/site.js?v=1"></script>
+    {% if settings_row and settings_row.analytics_enabled %}
+    <script type="module">
+        import { inject, track } from '/assets/js/vendor/vercel-analytics.js?v=1';
+        inject();
+        window.vercelTrack = track;
+    </script>
+    {% endif %}
+</body>
+
+</html>

@@ -1,0 +1,31 @@
+{% extends "admin/base.html" %}
+{% block title %}Sign in{% endblock %}
+
+{% block content %}
+<div class="admin-login-wrap">
+    <form class="admin-card admin-login" method="post" action="{{ admin_prefix }}/login" autocomplete="on">
+        <h1 class="admin-login-title">Console sign in</h1>
+        <p class="admin-login-sub">Content management for {{ site_name }}.</p>
+
+        {% if error %}
+        <div class="admin-alert error">{{ error }}</div>
+        {% endif %}
+
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <input type="hidden" name="next" value="{{ next_url }}">
+
+        <label class="admin-field">
+            <span>Email</span>
+            <input type="email" name="email" value="{{ email or '' }}" required autocomplete="username" autofocus>
+        </label>
+
+        <label class="admin-field">
+            <span>Password</span>
+            <input type="password" name="password" required autocomplete="current-password">
+        </label>
+
+        <button type="submit" class="admin-btn primary block">Sign in</button>
+        <p class="admin-login-note">Sessions last {{ (720 / 60)|int }} hours. Repeated failures lock the account.</p>
+    </form>
+</div>
+{% endblock %}

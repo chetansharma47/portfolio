@@ -1,0 +1,78 @@
+{% extends "admin/base.html" %}
+{% set active_key = 'enquiries' %}
+{% block title %}Enquiries{% endblock %}
+
+{% block content %}
+<div class="admin-page-head">
+    <div>
+        <h1>Advertisement enquiries</h1>
+        <p class="admin-muted">Every submission from the ad board, stored whether or not the email went out.</p>
+    </div>
+</div>
+
+<div class="admin-filter-row">
+    <a class="admin-chip-link {{ 'active' if not status_filter }}" href="{{ admin_prefix }}/enquiries">All</a>
+    {% for value in statuses %}
+    <a class="admin-chip-link {{ 'active' if status_filter == value }}"
+        href="{{ admin_prefix }}/enquiries?status_filter={{ value }}">{{ value.replace('_', ' ') }}</a>
+    {% endfor %}
+</div>
+
+{% if enquiries %}
+{% for enquiry in enquiries %}
+<section class="admin-card enquiry-card">
+    <header class="enquiry-head">
+        <div>
+            <h2 class="admin-card-title">{{ enquiry.brand }}</h2>
+            <p class="admin-muted">
+                {{ enquiry.slot_name }} &middot; {{ enquiry.budget_amount }} {{ enquiry.currency }}
+                ({{ enquiry.billing_cycle }}) &middot; {{ enquiry.created_at.strftime('%d %b %Y %H:%M') }}
+            </p>
+        </div>
+        <div class="enquiry-flags">
+            <span class="admin-chip {{ enquiry.status.value }}">{{ enquiry.status.value.replace('_', ' ') }}</span>
+            {% if enquiry.mail_sent %}
+            <span class="admin-chip on">emailed</span>
+            {% else %}
+            <span class="admin-chip off" title="{{ enquiry.mail_error }}">not emailed</span>
+            {% endif %}
+        </div>
+    </header>
+
+    <p class="enquiry-message">{{ enquiry.message }}</p>
+
+    <dl class="enquiry-meta">
+        <div><dt>Contact</dt><dd><a href="mailto:{{ enquiry.email }}">{{ enquiry.email }}</a></dd></div>
+        <div><dt>Source IP</dt><dd>{{ enquiry.source_ip or '-' }}</dd></div>
+        {% if enquiry.mail_error %}
+        <div><dt>Mail error</dt><dd class="admin-error-text">{{ enquiry.mail_error }}</dd></div>
+        {% endif %}
+    </dl>
+
+    <form method="post" action="{{ admin_prefix }}/enquiries/{{ enquiry.id }}" class="enquiry-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <label class="admin-field inline">
+            <span>Status</span>
+            <select name="new_status">
+                {% for value in statuses %}
+                <option value="{{ value }}" {% if enquiry.status.value == value %}selected{% endif %}>
+                    {{ value.replace('_', ' ') }}
+                </option>
+                {% endfor %}
+            </select>
+        </label>
+        <label class="admin-field grow">
+            <span>Notes</span>
+            <input type="text" name="admin_notes" value="{{ enquiry.admin_notes }}"
+                placeholder="Negotiation notes, agreed rate, follow-up date">
+        </label>
+        <button type="submit" class="admin-btn primary">Update</button>
+    </form>
+</section>
+{% endfor %}
+{% else %}
+<div class="admin-card admin-empty">
+    <p>No enquiries in this view.</p>
+</div>
+{% endif %}
+{% endblock %}

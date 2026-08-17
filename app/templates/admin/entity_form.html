@@ -1,0 +1,121 @@
+{% extends "admin/base.html" %}
+{% set active_key = spec.key %}
+{% block title %}{{ spec.label }}{% endblock %}
+
+{% block content %}
+<div class="admin-page-head">
+    <div>
+        <h1>{% if instance %}Edit {{ spec.label|lower }}{% else %}New {{ spec.label|lower }}{% endif %}</h1>
+        {% if spec.description %}<p class="admin-muted">{{ spec.description }}</p>{% endif %}
+    </div>
+    {% if not spec.singleton %}
+    <a class="admin-btn ghost" href="{{ admin_prefix }}/content/{{ spec.key }}">Back to list</a>
+    {% endif %}
+</div>
+
+{% if request.query_params.get('saved') %}
+<div class="admin-alert ok">Saved. The public page picks this up on the next request.</div>
+{% endif %}
+{% if request.query_params.get('rolledback') %}
+<div class="admin-alert ok">Rolled back to version {{ request.query_params.get('rolledback') }}.</div>
+{% endif %}
+{% if error %}
+<div class="admin-alert error">{{ error }}</div>
+{% endif %}
+
+<div class="admin-columns wide-first">
+    <form class="admin-card" method="post"
+        action="{{ admin_prefix }}/content/{{ spec.key }}/{{ instance.id if instance else 'new' }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+        {% for field in spec.fields %}
+        <div class="admin-field">
+            <label for="f-{{ field.name }}">
+                {{ field.label }}{% if field.required %} <b class="admin-req">*</b>{% endif %}
+            </label>
+
+            {% if field.kind == 'textarea' or field.kind == 'lines' or field.kind == 'json' %}
+            <textarea id="f-{{ field.name }}" name="{{ field.name }}" rows="{{ field.rows }}"
+                {% if field.kind == 'json' %}class="admin-mono"{% endif %}
+                {% if field.required %}required{% endif %}>{{ values.get(field.name, '') }}</textarea>
+
+            {% elif field.kind == 'checkbox' %}
+            <label class="admin-switch">
+                <input type="checkbox" id="f-{{ field.name }}" name="{{ field.name }}" value="1"
+                    {% if values.get(field.name) %}checked{% endif %}>
+                <span>Enabled</span>
+            </label>
+
+            {% elif field.kind == 'select' %}
+            <select id="f-{{ field.name }}" name="{{ field.name }}">
+                {% for value, label in (options.get(field.name) or field.options) %}
+                <option value="{{ value }}" {% if values.get(field.name)|string == value|string %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+
+            {% elif field.kind == 'number' %}
+            <input type="number" step="{{ field.step }}" id="f-{{ field.name }}" name="{{ field.name }}"
+                value="{{ values.get(field.name, '') }}" {% if field.required %}required{% endif %}>
+
+            {% else %}
+            <input type="{{ 'email' if field.kind == 'email' else 'text' }}" id="f-{{ field.name }}"
+                name="{{ field.name }}" value="{{ values.get(field.name, '') }}"
+                {% if field.required %}required{% endif %}>
+            {% endif %}
+
+            {% if field.help_text %}<span class="admin-help">{{ field.help_text }}</span>{% endif %}
+        </div>
+        {% endfor %}
+
+        <div class="admin-form-actions">
+            <button type="submit" class="admin-btn primary">
+                {% if instance %}Save changes{% else %}Create{% endif %}
+            </button>
+            <a class="admin-btn ghost" href="/#{{ instance.key if spec.key == 'sections' and instance else '' }}"
+                target="_blank" rel="noopener">Preview site</a>
+        </div>
+    </form>
+
+    <div class="admin-side-stack">
+        {% if instance and not spec.singleton %}
+        <section class="admin-card danger-card">
+            <h2 class="admin-card-title">Delete</h2>
+            <p class="admin-muted">Removes this record from the public site. The previous content stays in the
+                activity log and can be restored.</p>
+            <form method="post"
+                action="{{ admin_prefix }}/content/{{ spec.key }}/{{ instance.id }}/delete"
+                onsubmit="return confirm('Delete this {{ spec.label|lower }}?');">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button type="submit" class="admin-btn danger">Delete {{ spec.label|lower }}</button>
+            </form>
+        </section>
+        {% endif %}
+
+        {% if revisions %}
+        <section class="admin-card">
+            <h2 class="admin-card-title">Revision history</h2>
+            <ul class="admin-feed">
+                {% for revision in revisions %}
+                <li>
+                    <div>
+                        <b>v{{ revision.version }}</b> {{ revision.action }}
+                        <span class="admin-muted">{{ revision.created_at.strftime('%d %b %H:%M') }}</span>
+                    </div>
+                    {% if revision.previous %}
+                    <form method="post"
+                        action="{{ admin_prefix }}/content/{{ spec.key }}/{{ instance.id }}/rollback/{{ revision.version }}"
+                        onsubmit="return confirm('Restore the content as it was before v{{ revision.version }}?');">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <button type="submit" class="admin-btn small ghost">Restore previous</button>
+                    </form>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

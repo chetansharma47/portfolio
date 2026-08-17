@@ -1,6 +1,25 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
   "outputDirectory": ".",
+  "functions": {
+    "api/index.py": {
+      "memory": 1024,
+      "maxDuration": 30
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/v1/jobs/drain",
+      "schedule": "0 3 * * *"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/((?!assets/|_vercel/).*)",
+      "destination": "/api/index"
+    }
+  ],
   "headers": [
     {
       "source": "/assets/(.*)",
@@ -12,11 +31,11 @@
       ]
     },
     {
-      "source": "/(.*\\.html|/)?$",
+      "source": "/admin/(.*)",
       "headers": [
         {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
         }
       ]
     }

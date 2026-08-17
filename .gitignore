@@ -6,3 +6,8 @@
 # Tooling
 node_modules/
 .vercel/
+.venv/
+*.pyc
+__pycache__/
+*.db
+portfolio.db
